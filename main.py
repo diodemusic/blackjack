@@ -52,9 +52,7 @@ class Dealer:
     def __init__(self, deck: Deck) -> None:
         self.deck = deck
 
-    def deal_card(
-        self, user: str = "dealer", hidden: bool = False
-    ) -> None:  # TODO: maybe return somthing
+    def deal_card(self, user: str = "dealer", hidden: bool = False) -> None:
         card = self.deck.cards.pop(random.randrange(len(self.deck.cards)))
         if not hidden:
             print(f"Dealt a {card.name} of {card.suit} to {user}")
@@ -90,16 +88,16 @@ class PointsCalculator:
                         print(f"{e}: Please enter a number")
                         continue
 
-                    ace_points = int(ace_points)
-
                     if ace_points != 1 and ace_points != 11:
                         print("Please enter either 1 or 11")
                         continue
 
                     points += ace_points
                     break
-            break
         return points
+
+
+class Match: ...  # TODO: move main logic to this Match class
 
 
 def main():
