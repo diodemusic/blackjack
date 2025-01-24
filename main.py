@@ -74,9 +74,7 @@ class PointsCalculator:
         for card in hand:
             if not card.name == "ace":
                 points += card.points
-
-        for card in hand:
-            if card.name == "ace":
+            else:
                 while True:
                     try:
                         ace_points = int(
