@@ -1,6 +1,6 @@
 import random
 
-face_cards: dict = {
+FACE_CARDS: dict[str:int] = {
     "ace": 11,
     "king": 10,
     "queen": 10,
@@ -8,7 +8,7 @@ face_cards: dict = {
 }
 
 
-suits: list = [
+SUITS: list[str] = [
     "hearts",
     "diamonds",
     "spades",
@@ -25,13 +25,52 @@ class Card:
     def __repr__(self) -> str:
         return f"Card(name={self.name}, points={self.points}, suit={self.suit})"
 
+    def get_ascii_card(self, hidden: bool) -> str:
+        if hidden:
+            return """ _____
+|\\ ~ /|
+|}}:{{|
+|}}:{{|
+|}}:{{|
+|/_~_\\|"""
+
+        card_name = self.name[0].upper()
+        suits = {
+            "hearts": f""" _____
+|{card_name}_ _ |
+|( v )|
+| \\ / |
+|  .  |
+|____{card_name}|""",
+            "diamonds": f""" _____
+|{card_name} ^  |
+| / \\ |
+| \\ / |
+|  .  |
+|____{card_name}|""",
+            "spades": f""" _____
+|{card_name} .  |
+| /.\\ |
+|(_._)|
+|  |  |
+|____{card_name}|""",
+            "clubs": f""" _____
+|{card_name} _  |
+| ( ) |
+|(_'_)|
+|  |  |
+|____{card_name}|""",
+        }
+
+        return suits[self.suit]
+
 
 class Deck:
     def __init__(self) -> None:
         self.cards: list[Card] = []
 
-        for suit in suits:
-            for face_card, value in face_cards.items():
+        for suit in SUITS:
+            for face_card, value in FACE_CARDS.items():
                 self.cards.append(
                     Card(
                         name=face_card,
@@ -51,14 +90,23 @@ class Deck:
 class Dealer:
     def __init__(self, deck: Deck) -> None:
         self.deck = deck
+        self.dealer_hand: list[Card] = []
+        self.player_hand: list[Card] = []
 
-    def deal_card(self, user: str = "dealer", hidden: bool = False) -> None:
+    def deal_card(
+        self, hidden: bool = False, dealer: bool = False, new_line: bool = True
+    ) -> None:
         card = self.deck.cards.pop(random.randrange(len(self.deck.cards)))
-        if not hidden:
-            print(f"Dealt a {card.name} of {card.suit} to {user}")
-            return card
-        print(f"Dealt a card to {user}")
-        return card
+
+        if not new_line:
+            print(card.get_ascii_card(hidden))
+        else:
+            print(card.get_ascii_card(hidden))
+
+        if not dealer:
+            self.dealer_hand.append(card)
+        else:
+            self.player_hand.append(card)
 
 
 class PointsCalculator:
@@ -68,7 +116,7 @@ class PointsCalculator:
     def __repr__(self) -> str:
         return f"PointsCalculator(points={self.points})"
 
-    def calculate_points(self, hand: list) -> int:
+    def calculate_points(self, hand: list[Card]) -> int:
         points: int = 0
 
         for card in hand:
@@ -105,16 +153,23 @@ def main():
     dealer = Dealer(deck)
     points_calculator = PointsCalculator()
 
-    dealer_hand = []
-    player_hand = []
+    while True:
+        print("\nDealers cards:")
+        dealer.deal_card(dealer=True)
+        dealer.deal_card(dealer=True, hidden=True)
 
-    dealer_hand.append(dealer.deal_card())
-    player_hand.append(dealer.deal_card(username))
-    dealer_hand.append(dealer.deal_card(hidden=True))
-    player_hand.append(dealer.deal_card(username))
+        print(f"\n{username.title()} cards:")
+        dealer.deal_card()
+        dealer.deal_card()
 
-    player_points = points_calculator.calculate_points(player_hand)
-    print(player_points)
+        player_points = points_calculator.calculate_points(dealer.player_hand)
+        dealer_points = points_calculator.calculate_points(dealer.dealer_hand)
+
+        print(player_points)
+        print(dealer_points)
+
+        print(dealer.dealer_hand)
+        print(dealer.player_hand)
 
 
 if __name__ == "__main__":
