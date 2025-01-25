@@ -7,7 +7,7 @@
 - [ ] Implement betting system
 - [ ] Implement a method to display your current chips
 - [ ] Add a feature to save and load game state
-- [ ] Create a graphical user interface (GUI)
+- [x] Create a graphical user interface (GUI)
 - [ ] Implement unit tests for all classes and methods
 - [ ] Add logging for debugging and tracking game progress
 - [ ] Include a feature for shuffling the deck

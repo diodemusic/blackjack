@@ -127,7 +127,7 @@ class PointsCalculator:
                     try:
                         ace_points = int(
                             input(
-                                f"You have an {card.name} of {card.suit}, would you like it to count as 1 or 11 points? (1/11) "
+                                f"You have an {card.name} of {card.suit}, would you like it to count as 1 or 11 points? (1/11): "
                             )
                         )
                     except ValueError as e:
@@ -147,13 +147,15 @@ class Match: ...  # TODO: move main logic to this Match class
 
 
 def main():
+    play_again = True
+
     username = "kieran"  # TODO: input("Enter username: ")
 
     deck = Deck()
     dealer = Dealer(deck)
     points_calculator = PointsCalculator()
 
-    while True:
+    while play_again:
         print("\nDealers cards:")
         dealer.deal_card(dealer=True)
         dealer.deal_card(dealer=True, hidden=True)
@@ -165,11 +167,20 @@ def main():
         player_points = points_calculator.calculate_points(dealer.player_hand)
         dealer_points = points_calculator.calculate_points(dealer.dealer_hand)
 
-        print(player_points)
-        print(dealer_points)
+        while True:
+            hit_or_stand = input("Hit or stand? (hit/stand): ")
+            print(hit_or_stand)
 
-        print(dealer.dealer_hand)
-        print(dealer.player_hand)
+            if hit_or_stand != "hit" and hit_or_stand != "stand":
+                print(f"'{hit_or_stand}' is not hit or stand")
+                continue
+
+            print("i was reached")
+            hit_or_stand = hit_or_stand.lower()
+            break
+
+        print("and so was i")
+        quit()
 
 
 if __name__ == "__main__":
