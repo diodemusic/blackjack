@@ -2,6 +2,8 @@
 
 ## Existing TODOs
 
+- [ ] Fix user being prompted for the dealers ace(s)
+- [ ] Handle having 2 aces and rewrite player ace prompt
 - [ ] Move main logic to the `Match` class
 - [ ] Replace hardcoded username with user input
 - [ ] Implement betting system
