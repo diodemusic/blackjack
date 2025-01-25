@@ -2,6 +2,7 @@
 
 ## Existing TODOs
 
+- [ ] make user input just pressing keys instead of using commands, then write something like h: hit s: stand
 - [ ] Fix user being prompted for the dealers ace(s)
 - [ ] Handle having 2 aces and rewrite player ace prompt
 - [ ] Move main logic to the `Match` class

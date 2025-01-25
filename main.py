@@ -1,4 +1,7 @@
 import random
+import os
+
+username = "kieran"  # TODO: input("Enter username: ")
 
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
@@ -25,7 +28,7 @@ class Card:
     def __repr__(self) -> str:
         return f"Card(name={self.name}, points={self.points}, suit={self.suit})"
 
-    def get_ascii_card(self, hidden: bool) -> str:
+    def get_ascii_card(self, hidden: bool = False) -> str:
         if hidden:
             return """ _____
 |\\ ~ /|
@@ -93,20 +96,29 @@ class Dealer:
         self.dealer_hand: list[Card] = []
         self.player_hand: list[Card] = []
 
-    def deal_card(
-        self, hidden: bool = False, dealer: bool = False, new_line: bool = True
-    ) -> None:
+    def deal_card(self, dealer: bool = False) -> None:
         card = self.deck.cards.pop(random.randrange(len(self.deck.cards)))
 
-        if not new_line:
-            print(card.get_ascii_card(hidden))
-        else:
-            print(card.get_ascii_card(hidden))
-
         if not dealer:
-            self.dealer_hand.append(card)
-        else:
             self.player_hand.append(card)
+        else:
+            self.dealer_hand.append(card)
+
+    def print_hands(self):
+        os.system("cls" if os.name == "nt" else "clear")
+
+        print("\nDealer cards:")
+
+        print(Card.get_ascii_card(self.dealer_hand[0]))
+        print(Card.get_ascii_card(self.dealer_hand[1], True))
+
+        for card in self.dealer_hand[2:]:
+            print(Card.get_ascii_card(card))
+
+        print(f"\n{username.title()} cards:")
+
+        for card in self.player_hand:
+            print(Card.get_ascii_card(card))
 
 
 class PointsCalculator:
@@ -127,7 +139,7 @@ class PointsCalculator:
                     try:
                         ace_points = int(
                             input(
-                                f"You have an {card.name} of {card.suit}, would you like it to count as 1 or 11 points? (1/11): "
+                                f"\nYou have an {card.name} of {card.suit}, would you like it to count as 1 or 11 points? (1/11): "
                             )
                         )
                     except ValueError as e:
@@ -149,39 +161,62 @@ class Match: ...  # TODO: move main logic to this Match class
 def main():
     play_again = True
 
-    username = "kieran"  # TODO: input("Enter username: ")
-
     deck = Deck()
     dealer = Dealer(deck)
-    points_calculator = PointsCalculator()
+    # TODO: points_calculator = PointsCalculator()
 
     while play_again:
-        print("\nDealers cards:")
+        os.system("cls" if os.name == "nt" else "clear")
+
+        dealer.dealer_hand = []
+        dealer.player_hand = []
+
         dealer.deal_card(dealer=True)
-        dealer.deal_card(dealer=True, hidden=True)
+        dealer.deal_card(dealer=True)
 
-        print(f"\n{username.title()} cards:")
         dealer.deal_card()
         dealer.deal_card()
 
-        player_points = points_calculator.calculate_points(dealer.player_hand)
-        dealer_points = points_calculator.calculate_points(dealer.dealer_hand)
+        dealer.print_hands()
 
         while True:
-            hit_or_stand = input("Hit or stand? (hit/stand): ")
-            print(hit_or_stand)
+            hit_or_stand = input("\nHit or stand? (hit/stand): ")
+            hit_or_stand = hit_or_stand.lower()
 
             if hit_or_stand != "hit" and hit_or_stand != "stand":
                 print(f"'{hit_or_stand}' is not hit or stand")
                 continue
 
-            print("i was reached")
-            hit_or_stand = hit_or_stand.lower()
+            if hit_or_stand == "hit":
+                dealer.deal_card()
+                dealer.print_hands()
+
             break
 
-        print("and so was i")
-        quit()
+        if hit_or_stand == "hit":
+            dealer.deal_card()
+
+        while True:
+            play_again_prompt = input("Play again? (Y/n): ")
+            play_again_prompt = play_again_prompt.lower()
+
+            if play_again_prompt == "":
+                break
+
+            if play_again_prompt != "y" and play_again_prompt != "n":
+                print(f"'{play_again_prompt}' is not y or n")
+                continue
+
+            if play_again_prompt == "y":
+                play_again = True
+            else:
+                print("Goodbye")
+                play_again = False
+            break
 
 
 if __name__ == "__main__":
     main()
+
+# player_points = points_calculator.calculate_points(dealer.player_hand)
+# dealer_points = points_calculator.calculate_points(dealer.dealer_hand)
