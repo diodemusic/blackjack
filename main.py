@@ -1,6 +1,21 @@
 import random
 import os
 
+os.system("cls" if os.name == "nt" else "clear")
+print("""
+88          88                       88        88                       88         
+88          88                       88        ""                       88         
+88          88                       88                                 88         
+88,dPPYba,  88 ,adPPYYba,  ,adPPYba, 88   ,d8  88 ,adPPYYba,  ,adPPYba, 88   ,d8   
+88P'    "8a 88 ""     `Y8 a8"     "" 88 ,a8"   88 ""     `Y8 a8"     "" 88 ,a8"    
+88       d8 88 ,adPPPPP88 8b         8888[     88 ,adPPPPP88 8b         8888[      
+88b,   ,a8" 88 88,    ,88 "8a,   ,aa 88`"Yba,  88 88,    ,88 "8a,   ,aa 88`"Yba,   
+8Y"Ybbd8"'  88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a 88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a  
+                                              ,88                                  
+                                            888P"                                  """)
+
+input("Press [ENTER] to play")
+
 username = "kieran"  # TODO: input("Enter username: ")
 
 FACE_CARDS: dict[str:int] = {
@@ -197,7 +212,7 @@ def main():
             dealer.deal_card()
 
         while True:
-            play_again_prompt = input("Play again? (Y/n): ")
+            play_again_prompt = input("\nPlay again? (Y/n): ")
             play_again_prompt = play_again_prompt.lower()
 
             if play_again_prompt == "":
@@ -210,6 +225,7 @@ def main():
             if play_again_prompt == "y":
                 play_again = True
             else:
+                os.system("cls" if os.name == "nt" else "clear")
                 print("Goodbye")
                 play_again = False
             break
