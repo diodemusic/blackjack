@@ -3,6 +3,7 @@ import os
 import cursor
 from pygame import mixer  # This is only for playing audio
 from colorama import Fore
+import time
 
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
@@ -79,12 +80,14 @@ class SoundManager:
     game_start_path = audio_dir + "game_start.mp3"
     in_game_path = audio_dir + "in_game.mp3"
     game_over_path = audio_dir + "game_over.mp3"
+    close_game_path = audio_dir + "close_game.mp3"
 
     menu = mixer.Sound(menu_path)
     pluck = mixer.Sound(pluck_path)
     game_start = mixer.Sound(game_start_path)
     in_game = mixer.Sound(in_game_path)
     game_over = mixer.Sound(game_over_path)
+    close_game = mixer.Sound(close_game_path)
 
     def play_menu(self) -> None:
         self.menu.play(loops=-1)
@@ -107,6 +110,9 @@ class SoundManager:
     def play_game_over(self) -> None:
         self.game_over.play()
 
+    def play_close_game(self) -> None:
+        self.close_game.play()
+
 
 class Card:
     def __init__(self, name: str, points: int, suit: str) -> None:
@@ -126,32 +132,46 @@ class Card:
 |}}:{{|
 |____?|"""
 
-        card_name = self.name[0].upper()
-        suits = {
-            "hearts": f""" _____
-|{card_name}_ _ |
-|( v )|
-| \\ / |
-|  .  |
-|____{card_name}|""",
-            "diamonds": f""" _____
-|{card_name} ^  |
-| / \\ |
-| \\ / |
-|  .  |
-|____{card_name}|""",
-            "spades": f""" _____
-|{card_name} .  |
-| /.\\ |
-|(_._)|
-|  |  |
-|____{card_name}|""",
-            "clubs": f""" _____
-|{card_name} _  |
-| ( ) |
-|(_'_)|
-|  |  |
-|____{card_name}|""",
+        if self.name == "10":
+            card_name = self.name[:2]
+            card_top = f""" _____
+|{card_name}   |"""
+            card_bottom = f"|___{card_name}|"
+        else:
+            card_name = self.name[0].upper()
+            card_top = f""" _____
+|{card_name}    |"""
+            card_bottom = f"|____{card_name}|"
+
+        heart_card = f"""{card_top}
+| ♥ ♥ |
+|♥ ♥ ♥|
+| ♥ ♥ |
+{card_bottom}"""
+
+        diamond_card = f"""{card_top}
+| ♦ ♦ |
+|♦ ♦ ♦|
+| ♦ ♦ |
+{card_bottom}"""
+
+        spade_card = f"""{card_top}
+| ♠ ♠ |
+|♠ ♠ ♠|
+| ♠ ♠ |
+{card_bottom}"""
+
+        club_card = f"""{card_top}
+| ♣ ♣ |
+|♣ ♣ ♣|
+| ♣ ♣ |
+{card_bottom}"""
+
+        suits: dict[str:str] = {
+            "hearts": heart_card,
+            "diamonds": diamond_card,
+            "spades": spade_card,
+            "clubs": club_card,
         }
 
         return suits[self.suit]
@@ -316,12 +336,14 @@ def main():
             if play_again_prompt == "y":
                 play_again = True
             else:
+                _utils.toggle_cursor()
                 _utils.clear_term()
-                print(_Utils.TEXT_COLOR + "GOODBYE 😈")
-                print(Fore.WHITE)
-                cursor.show()
+                sound.play_close_game()
+                print(_Utils.TEXT_COLOR + "GOODBYE 😈" + Fore.WHITE)
+                time.sleep(1)
                 play_again = False
             break
+    _utils.toggle_cursor()
 
 
 if __name__ == "__main__":
