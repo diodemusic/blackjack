@@ -2,6 +2,8 @@ import random
 import os
 import cursor
 from pygame import mixer  # This is only for playing audio
+from colorama import Fore
+import curses
 
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
@@ -21,6 +23,9 @@ SUITS: list[str] = [
 
 class _Utils:
     TEXT_PADDING: int = 80
+    TEXT_COLOR: str = Fore.LIGHTRED_EX
+    DEALER_CARDS_COLOR: str = Fore.RED
+    PLAYER_CARDS_COLOR: str = Fore.BLUE
 
     def __init__(self):
         self.title = """88          88                       88        88                       88         
@@ -34,19 +39,21 @@ class _Utils:
                                               ,88                                  
                                             888P\"""".center(self.TEXT_PADDING)
 
-        self.start_game_prompt = "Press [ENTER] to play...".center(self.TEXT_PADDING)
+        self.start_game_prompt = "PRESS [ENTER] TO PLAY...".center(self.TEXT_PADDING)
         self.username = ""
         self.cursor_off = False
 
     def start_menu(self):
         self.toggle_cursor()
         self.clear_term()
-        print(self.title + "\n")
-        print(self.start_game_prompt)
+        print(self.TEXT_COLOR + self.title + "\n")
+        print(self.TEXT_COLOR + self.start_game_prompt)
         input()
 
     def prompt_for_username(self) -> None:
-        self.username = "kieran"  # TODO: input("Enter username: ")
+        self.clear_term()
+        print(self.title, "\n")
+        self.username = input("ENTER USERNAME: ".center(self.TEXT_PADDING)).upper()
 
     def toggle_cursor(self) -> None:
         if not self.cursor_off:
@@ -58,6 +65,45 @@ class _Utils:
 
     def clear_term(self) -> None:
         os.system("cls" if os.name == "nt" else "clear")
+
+
+class SoundManager:
+    mixer.init()
+
+    audio_dir = "audio\\"
+
+    menu_path = audio_dir + "menu.mp3"
+    pluck_path = audio_dir + "pluck.mp3"
+    game_start_path = audio_dir + "game_start.mp3"
+    in_game_path = audio_dir + "in_game.mp3"
+    game_over_path = audio_dir + "game_over.mp3"
+
+    menu = mixer.Sound(menu_path)
+    pluck = mixer.Sound(pluck_path)
+    game_start = mixer.Sound(game_start_path)
+    in_game = mixer.Sound(in_game_path)
+    game_over = mixer.Sound(game_over_path)
+
+    def play_menu(self) -> None:
+        self.menu.play(loops=-1)
+
+    def stop_menu(self) -> None:
+        self.menu.stop()
+
+    def play_game_start(self) -> None:
+        self.game_start.play()
+
+    def play_in_game(self) -> None:
+        self.in_game.play(loops=-1)
+
+    def stop_in_game(self) -> None:
+        self.in_game.stop()
+
+    def play_pluck(self) -> None:
+        self.pluck.play()
+
+    def play_game_over(self) -> None:
+        self.game_over.play()
 
 
 class Card:
@@ -72,11 +118,11 @@ class Card:
     def get_ascii_card(self, hidden: bool = False) -> str:
         if hidden:
             return """ _____
-|\\ ~ /|
+|?    |
 |}}:{{|
 |}}:{{|
 |}}:{{|
-|/_~_\\|"""
+|____?|"""
 
         card_name = self.name[0].upper()
         suits = {
@@ -146,18 +192,22 @@ class Dealer:
         else:
             self.dealer_hand.append(card)
 
-    def print_card(self, card: Card, hidden: bool = False) -> None:
+    def print_card(self, card: Card, hidden: bool = False, dealer=True) -> None:
         ascii_card = Card.get_ascii_card(card, hidden)
 
-        for line in ascii_card.splitlines():
-            print(" " * self.card_spacing, line)
+        if dealer:
+            for line in ascii_card.splitlines():
+                print(_Utils.DEALER_CARDS_COLOR + " " * self.card_spacing, line)
+        else:
+            for line in ascii_card.splitlines():
+                print(_Utils.PLAYER_CARDS_COLOR + " " * self.card_spacing, line)
 
         self.card_spacing += 3
 
     def print_hands(self, username: str):
         self.card_spacing = 0
 
-        print("\nDealers cards:")
+        print(_Utils.TEXT_COLOR + "\nDEALERS CARDS:")
 
         self.print_card(self.dealer_hand[0])
         self.print_card(self.dealer_hand[1], hidden=True)
@@ -167,10 +217,10 @@ class Dealer:
 
         self.card_spacing = 0
 
-        print(f"\n{username.title()} cards:")
+        print(_Utils.TEXT_COLOR + f"\n{username} CARDS:")
 
         for player_card in self.player_hand:
-            self.print_card(player_card)
+            self.print_card(player_card, dealer=False)
 
 
 class PointsCalculator:
@@ -181,30 +231,12 @@ class PointsCalculator:
         return f"PointsCalculator(points={self.points})"
 
     def calculate_points(self, hand: list[Card]) -> int:
-        points: int = 0
+        self.points = 0
 
         for card in hand:
-            if not card.name == "ace":
-                points += card.points
-            else:
-                while True:
-                    try:
-                        ace_points = int(
-                            input(
-                                f"\nYou have an {card.name} of {card.suit}, would you like it to count as 1 or 11 points? (1/11): "
-                            )
-                        )
-                    except ValueError as e:
-                        print(f"{e}: Please enter a number")
-                        continue
+            self.points += card.points
 
-                    if ace_points != 1 and ace_points != 11:
-                        print("Please enter either 1 or 11")
-                        continue
-
-                    points += ace_points
-                    break
-        return points
+        return self.points
 
 
 class Match: ...  # TODO: move main logic to this Match class
@@ -215,19 +247,23 @@ def main():
 
     deck = Deck()
     dealer = Dealer(deck)
-    # TODO: points_calculator = PointsCalculator()
+    points_calculator = PointsCalculator()
     _utils = _Utils()
+    sound = SoundManager()
 
-    mixer.init()
-    mixer.music.load("audio\\ingame.mp3")
-    mixer.music.play()
-
+    sound.play_menu()
     _utils.start_menu()
-
+    sound.play_pluck()
     _utils.prompt_for_username()
+    sound.play_pluck()
+
+    sound.stop_menu()
 
     while play_again:
         _utils.clear_term()
+        sound.play_game_start()
+        sound.stop_in_game()
+        sound.play_in_game()
 
         dealer.dealer_hand = []
         dealer.player_hand = []
@@ -244,39 +280,51 @@ def main():
         _utils.toggle_cursor()
 
         while True:
-            hit_or_stand = input("\nHit or stand? (hit/stand): ")
+            hit_or_stand = input(_Utils.TEXT_COLOR + "\nHIT OR STAND? (H/S): ")
+            sound.play_pluck()
             hit_or_stand = hit_or_stand.lower()
 
-            if hit_or_stand != "hit" and hit_or_stand != "stand":
-                print(f"'{hit_or_stand}' is not hit or stand")
+            if hit_or_stand != "h" and hit_or_stand != "s":
+                print(_Utils.TEXT_COLOR + f"'{hit_or_stand.upper()}' IS NOT H OR S")
                 continue
 
-            if hit_or_stand == "hit":
+            if hit_or_stand == "h":
                 dealer.deal_card()
                 _utils.clear_term()
                 dealer.print_hands(_utils.username)
 
-            break
+                player_points = points_calculator.calculate_points(dealer.player_hand)
 
-        if hit_or_stand == "hit":
-            dealer.deal_card()
+                print(dealer.dealer_hand)
+                print(dealer.player_hand)
+                print(player_points)
+
+                if player_points > 21:
+                    sound.stop_in_game()
+                    sound.play_game_over()
+                    print("BUST")
+                    input("PRESS [ENTER] TO CONTINUE")
+                    sound.play_pluck()
+                    break
 
         while True:
-            play_again_prompt = input("\nPlay again? (Y/n): ")
+            play_again_prompt = input("\nPLAY AGAIN? (Y/N): ")
+            sound.play_pluck()
             play_again_prompt = play_again_prompt.lower()
 
             if play_again_prompt == "":
                 break
 
             if play_again_prompt != "y" and play_again_prompt != "n":
-                print(f"'{play_again_prompt}' is not y or n")
+                print(_Utils.TEXT_COLOR + f"'{play_again_prompt}' IS NOT Y OR N")
                 continue
 
             if play_again_prompt == "y":
                 play_again = True
             else:
                 _utils.clear_term()
-                print("Goodbye")
+                print(_Utils.TEXT_COLOR + "GOODBYE 😈")
+                print(Fore.WHITE)
                 cursor.show()
                 play_again = False
             break
