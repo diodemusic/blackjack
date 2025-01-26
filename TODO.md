@@ -2,6 +2,7 @@
 
 ## Existing TODOs
 
+- [ ] Add stand functionality
 - [ ] Add end game screen music after a bust
 - [ ] Count aces as 1 or 11 dynamically
 - [ ] Add __repr__() to classes
