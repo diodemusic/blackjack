@@ -23,8 +23,7 @@ SUITS: list[str] = [
 class _Utils:
     TEXT_PADDING: int = 80
     TEXT_COLOR: str = Fore.LIGHTRED_EX
-    DEALER_CARDS_COLOR: str = Fore.RED
-    PLAYER_CARDS_COLOR: str = Fore.BLUE
+    CARD_COLOR: str = Fore.WHITE
 
     def __init__(self):
         self.title = """88          88                       88        88                       88         
@@ -51,8 +50,12 @@ class _Utils:
 
     def prompt_for_username(self) -> None:
         self.clear_term()
+        self.toggle_cursor()
+
         print(self.title, "\n")
-        self.username = input("ENTER USERNAME: ".center(self.TEXT_PADDING)).upper()
+        self.username = input(
+            "ENTER USERNAME: ".rjust(self.TEXT_PADDING // 2 + 4)
+        ).upper()
 
     def toggle_cursor(self) -> None:
         if not self.cursor_off:
@@ -191,15 +194,11 @@ class Dealer:
         else:
             self.dealer_hand.append(card)
 
-    def print_card(self, card: Card, hidden: bool = False, dealer=True) -> None:
+    def print_card(self, card: Card, hidden: bool = False) -> None:
         ascii_card = Card.get_ascii_card(card, hidden)
 
-        if dealer:
-            for line in ascii_card.splitlines():
-                print(_Utils.DEALER_CARDS_COLOR + " " * self.card_spacing, line)
-        else:
-            for line in ascii_card.splitlines():
-                print(_Utils.PLAYER_CARDS_COLOR + " " * self.card_spacing, line)
+        for line in ascii_card.splitlines():
+            print(_Utils.CARD_COLOR + " " * self.card_spacing, line)
 
         self.card_spacing += 3
 
@@ -219,7 +218,7 @@ class Dealer:
         print(_Utils.TEXT_COLOR + f"\n{username} CARDS:")
 
         for player_card in self.player_hand:
-            self.print_card(player_card, dealer=False)
+            self.print_card(player_card)
 
 
 class PointsCalculator:
@@ -276,8 +275,6 @@ def main():
         _utils.clear_term()
         dealer.print_hands(_utils.username)
 
-        _utils.toggle_cursor()
-
         while True:
             hit_or_stand = input(_Utils.TEXT_COLOR + "\nHIT OR STAND? (H/S): ")
             sound.play_pluck()
@@ -293,16 +290,14 @@ def main():
                 dealer.print_hands(_utils.username)
 
                 player_points = points_calculator.calculate_points(dealer.player_hand)
-
-                print(dealer.dealer_hand)
-                print(dealer.player_hand)
                 print(player_points)
+                print(dealer.player_hand)
 
                 if player_points > 21:
                     sound.stop_in_game()
                     sound.play_game_over()
-                    print("BUST")
-                    input("PRESS [ENTER] TO CONTINUE")
+                    print(_utils.TEXT_COLOR + "BUST")
+                    input(_utils.TEXT_COLOR + "PRESS [ENTER] TO CONTINUE")
                     sound.play_pluck()
                     break
 
