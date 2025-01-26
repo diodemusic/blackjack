@@ -2,29 +2,6 @@ import random
 import os
 import cursor
 
-cursor.hide()
-
-os.system("cls" if os.name == "nt" else "clear")
-print(
-    """
-88          88                       88        88                       88         
-88          88                       88        ""                       88         
-88          88                       88                                 88         
-88,dPPYba,  88 ,adPPYYba,  ,adPPYba, 88   ,d8  88 ,adPPYYba,  ,adPPYba, 88   ,d8   
-88P'    "8a 88 ""     `Y8 a8"     "" 88 ,a8"   88 ""     `Y8 a8"     "" 88 ,a8"    
-88       d8 88 ,adPPPPP88 8b         8888[     88 ,adPPPPP88 8b         8888[      
-88b,   ,a8" 88 88,    ,88 "8a,   ,aa 88`"Yba,  88 88,    ,88 "8a,   ,aa 88`"Yba,   
-8Y"Ybbd8"'  88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a 88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a  
-                                              ,88                                  
-                                            888P"                                  """.center(
-        20
-    )
-)
-
-input("Press [ENTER] to play".center(20))
-
-username = "kieran"  # TODO: input("Enter username: ")
-
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
     "king": 10,
@@ -39,6 +16,46 @@ SUITS: list[str] = [
     "spades",
     "clubs",
 ]
+
+
+def clear_term() -> None:
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+class Utils:
+    TEXT_PADDING: int = 80
+
+    def __init__(self):
+        self.title = """88          88                       88        88                       88         
+88          88                       88        ""                       88         
+88          88                       88                                 88         
+88,dPPYba,  88 ,adPPYYba,  ,adPPYba, 88   ,d8  88 ,adPPYYba,  ,adPPYba, 88   ,d8   
+88P'    "8a 88 ""     `Y8 a8"     "" 88 ,a8"   88 ""     `Y8 a8"     "" 88 ,a8"    
+88       d8 88 ,adPPPPP88 8b         8888[     88 ,adPPPPP88 8b         8888[      
+88b,   ,a8" 88 88,    ,88 "8a,   ,aa 88`"Yba,  88 88,    ,88 "8a,   ,aa 88`"Yba,   
+8Y"Ybbd8"'  88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a 88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a  
+                                              ,88                                  
+                                            888P\"""".center(self.TEXT_PADDING)
+
+        self.start_game_prompt = "Press [ENTER] to play...".center(self.TEXT_PADDING)
+        self.username = ""
+        self.cursor_off = False
+
+    def start_menu(self):
+        self.toggle_cursor()
+        clear_term()
+        print(self.title + "\n")
+        print(self.start_game_prompt)
+        input()
+
+    def prompt_for_username(self) -> None:
+        self.username = "kieran"  # TODO: input("Enter username: ")
+
+    def toggle_cursor(self) -> None:
+        if not self.cursor_off:
+            cursor.hide()
+            return
+        cursor.show()
 
 
 class Card:
@@ -126,8 +143,8 @@ class Dealer:
         else:
             self.dealer_hand.append(card)
 
-    def print_hands(self):
-        os.system("cls" if os.name == "nt" else "clear")
+    def print_hands(self, username: str):
+        clear_term()
 
         print("\nDealers cards:")
 
@@ -186,9 +203,13 @@ def main():
     deck = Deck()
     dealer = Dealer(deck)
     # TODO: points_calculator = PointsCalculator()
+    utils = Utils()
+
+    utils.start_menu()
+    utils.prompt_for_username()
 
     while play_again:
-        os.system("cls" if os.name == "nt" else "clear")
+        clear_term()
 
         dealer.dealer_hand = []
         dealer.player_hand = []
@@ -199,7 +220,7 @@ def main():
         dealer.deal_card()
         dealer.deal_card()
 
-        dealer.print_hands()
+        dealer.print_hands(utils.username)
 
         while True:
             hit_or_stand = input("\nHit or stand? (hit/stand): ")
@@ -211,7 +232,7 @@ def main():
 
             if hit_or_stand == "hit":
                 dealer.deal_card()
-                dealer.print_hands()
+                dealer.print_hands(utils.username)
 
             break
 
@@ -232,7 +253,7 @@ def main():
             if play_again_prompt == "y":
                 play_again = True
             else:
-                os.system("cls" if os.name == "nt" else "clear")
+                clear_term()
                 print("Goodbye")
                 cursor.show()
                 play_again = False
