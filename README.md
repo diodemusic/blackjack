@@ -40,7 +40,13 @@
     cd blackjack
     ```
 
-3. Run the game:
+3. Install libraries
+
+    ```sh
+    pip install -r /requirements.txt
+    ```
+
+4. Run the game:
 
     ```sh
     python main.py
