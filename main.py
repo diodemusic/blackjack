@@ -1,8 +1,12 @@
 import random
 import os
+import cursor
+
+cursor.hide()
 
 os.system("cls" if os.name == "nt" else "clear")
-print("""
+print(
+    """
 88          88                       88        88                       88         
 88          88                       88        ""                       88         
 88          88                       88                                 88         
@@ -12,9 +16,12 @@ print("""
 88b,   ,a8" 88 88,    ,88 "8a,   ,aa 88`"Yba,  88 88,    ,88 "8a,   ,aa 88`"Yba,   
 8Y"Ybbd8"'  88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a 88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a  
                                               ,88                                  
-                                            888P"                                  """)
+                                            888P"                                  """.center(
+        20
+    )
+)
 
-input("Press [ENTER] to play")
+input("Press [ENTER] to play".center(20))
 
 username = "kieran"  # TODO: input("Enter username: ")
 
@@ -22,7 +29,7 @@ FACE_CARDS: dict[str:int] = {
     "ace": 11,
     "king": 10,
     "queen": 10,
-    "joker": 10,
+    "jack": 10,
 }
 
 
@@ -122,7 +129,7 @@ class Dealer:
     def print_hands(self):
         os.system("cls" if os.name == "nt" else "clear")
 
-        print("\nDealer cards:")
+        print("\nDealers cards:")
 
         print(Card.get_ascii_card(self.dealer_hand[0]))
         print(Card.get_ascii_card(self.dealer_hand[1], True))
@@ -227,6 +234,7 @@ def main():
             else:
                 os.system("cls" if os.name == "nt" else "clear")
                 print("Goodbye")
+                cursor.show()
                 play_again = False
             break
 
