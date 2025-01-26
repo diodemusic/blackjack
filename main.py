@@ -1,6 +1,7 @@
 import random
 import os
 import cursor
+from pygame import mixer  # This is only for playing audio
 
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
@@ -18,11 +19,7 @@ SUITS: list[str] = [
 ]
 
 
-def clear_term() -> None:
-    os.system("cls" if os.name == "nt" else "clear")
-
-
-class Utils:
+class _Utils:
     TEXT_PADDING: int = 80
 
     def __init__(self):
@@ -43,7 +40,7 @@ class Utils:
 
     def start_menu(self):
         self.toggle_cursor()
-        clear_term()
+        self.clear_term()
         print(self.title + "\n")
         print(self.start_game_prompt)
         input()
@@ -54,8 +51,13 @@ class Utils:
     def toggle_cursor(self) -> None:
         if not self.cursor_off:
             cursor.hide()
+            self.cursor_off = True
             return
         cursor.show()
+        self.cursor_off = False
+
+    def clear_term(self) -> None:
+        os.system("cls" if os.name == "nt" else "clear")
 
 
 class Card:
@@ -134,6 +136,7 @@ class Dealer:
         self.deck = deck
         self.dealer_hand: list[Card] = []
         self.player_hand: list[Card] = []
+        self.card_spacing = 0
 
     def deal_card(self, dealer: bool = False) -> None:
         card = self.deck.cards.pop(random.randrange(len(self.deck.cards)))
@@ -143,21 +146,31 @@ class Dealer:
         else:
             self.dealer_hand.append(card)
 
+    def print_card(self, card: Card, hidden: bool = False) -> None:
+        ascii_card = Card.get_ascii_card(card, hidden)
+
+        for line in ascii_card.splitlines():
+            print(" " * self.card_spacing, line)
+
+        self.card_spacing += 3
+
     def print_hands(self, username: str):
-        clear_term()
+        self.card_spacing = 0
 
         print("\nDealers cards:")
 
-        print(Card.get_ascii_card(self.dealer_hand[0]))
-        print(Card.get_ascii_card(self.dealer_hand[1], True))
+        self.print_card(self.dealer_hand[0])
+        self.print_card(self.dealer_hand[1], hidden=True)
 
-        for card in self.dealer_hand[2:]:
-            print(Card.get_ascii_card(card))
+        for dealer_card in self.dealer_hand[2:]:
+            self.print_card(dealer_card)
+
+        self.card_spacing = 0
 
         print(f"\n{username.title()} cards:")
 
-        for card in self.player_hand:
-            print(Card.get_ascii_card(card))
+        for player_card in self.player_hand:
+            self.print_card(player_card)
 
 
 class PointsCalculator:
@@ -203,13 +216,18 @@ def main():
     deck = Deck()
     dealer = Dealer(deck)
     # TODO: points_calculator = PointsCalculator()
-    utils = Utils()
+    _utils = _Utils()
 
-    utils.start_menu()
-    utils.prompt_for_username()
+    mixer.init()
+    mixer.music.load("audio\\ingame.mp3")
+    mixer.music.play()
+
+    _utils.start_menu()
+
+    _utils.prompt_for_username()
 
     while play_again:
-        clear_term()
+        _utils.clear_term()
 
         dealer.dealer_hand = []
         dealer.player_hand = []
@@ -220,7 +238,10 @@ def main():
         dealer.deal_card()
         dealer.deal_card()
 
-        dealer.print_hands(utils.username)
+        _utils.clear_term()
+        dealer.print_hands(_utils.username)
+
+        _utils.toggle_cursor()
 
         while True:
             hit_or_stand = input("\nHit or stand? (hit/stand): ")
@@ -232,7 +253,8 @@ def main():
 
             if hit_or_stand == "hit":
                 dealer.deal_card()
-                dealer.print_hands(utils.username)
+                _utils.clear_term()
+                dealer.print_hands(_utils.username)
 
             break
 
@@ -253,7 +275,7 @@ def main():
             if play_again_prompt == "y":
                 play_again = True
             else:
-                clear_term()
+                _utils.clear_term()
                 print("Goodbye")
                 cursor.show()
                 play_again = False
