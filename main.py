@@ -4,6 +4,7 @@ import cursor
 from pygame import mixer  # This is only for playing audio
 from colorama import Fore
 import time
+import keyboard
 
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
@@ -43,7 +44,6 @@ class _Utils:
         self.cursor_off = False
 
     def start_menu(self):
-        self.toggle_cursor()
         self.clear_term()
         print(self.TEXT_COLOR + self.title + "\n")
         print(self.TEXT_COLOR + self.start_game_prompt)
@@ -51,7 +51,6 @@ class _Utils:
 
     def prompt_for_username(self) -> None:
         self.clear_term()
-        self.toggle_cursor()
 
         print(self.title, "\n")
         self.username = input(
@@ -199,7 +198,7 @@ class Deck:
         return f"Deck(cards={self.cards})"
 
 
-class Dealer:
+class Dealer(_Utils):
     def __init__(self, deck: Deck) -> None:
         self.deck = deck
         self.dealer_hand: list[Card] = []
@@ -222,13 +221,14 @@ class Dealer:
 
         self.card_spacing += 3
 
-    def print_hands(self, username: str):
+    def print_hands(self, username: str, hide_dealer_card: bool = True):
         self.card_spacing = 0
 
+        self.clear_term()
         print(_Utils.TEXT_COLOR + "\nDEALERS CARDS:")
 
         self.print_card(self.dealer_hand[0])
-        self.print_card(self.dealer_hand[1], hidden=True)
+        self.print_card(self.dealer_hand[1], hidden=hide_dealer_card)
 
         for dealer_card in self.dealer_hand[2:]:
             self.print_card(dealer_card)
@@ -276,12 +276,15 @@ def main():
     sound.play_pluck()
 
     sound.stop_menu()
+    sound.play_in_game()
 
     while play_again:
+        hs_key_pressed = False
+        play_again_key_pressed = False
+
         _utils.clear_term()
         sound.play_game_start()
         sound.stop_in_game()
-        sound.play_in_game()
 
         dealer.dealer_hand = []
         dealer.player_hand = []
@@ -292,62 +295,65 @@ def main():
         dealer.deal_card()
         dealer.deal_card()
 
-        _utils.clear_term()
         dealer.print_hands(_utils.username)
 
         while True:
-            hit_or_stand = input(_Utils.TEXT_COLOR + "\nHIT OR STAND? (H/S): ")
-            sound.play_pluck()
-            hit_or_stand = hit_or_stand.lower()
-
-            if hit_or_stand != "h" and hit_or_stand != "s":
-                print(_Utils.TEXT_COLOR + f"'{hit_or_stand.upper()}' IS NOT H OR S")
-                continue
-
-            if hit_or_stand == "h":
+            if keyboard.is_pressed("h"):
+                sound.play_pluck()
                 dealer.deal_card()
-                _utils.clear_term()
                 dealer.print_hands(_utils.username)
 
                 player_points = points_calculator.calculate_points(dealer.player_hand)
-                print(player_points)
-                print(dealer.player_hand)
 
                 if player_points > 21:
                     sound.stop_in_game()
                     sound.play_game_over()
                     print(_utils.TEXT_COLOR + "BUST")
-                    input(_utils.TEXT_COLOR + "PRESS [ENTER] TO CONTINUE")
-                    sound.play_pluck()
+
+                hs_key_pressed = True
+
+            elif keyboard.is_pressed("s"):
+                player_points = points_calculator.calculate_points(dealer.player_hand)
+                dealer_points = points_calculator.calculate_points(dealer.dealer_hand)
+
+                dealer.print_hands(_utils.username, hide_dealer_card=False)
+
+                sound.stop_in_game()
+
+                if dealer_points > 21:
+                    print(_utils.TEXT_COLOR + "DEALER BUST")
+                    print(_utils.TEXT_COLOR + "YOU WIN!")
+                    break
+                elif player_points > dealer_points:
+                    print(_utils.TEXT_COLOR + "YOU HAVE MORE POINTS")
+                    print(_utils.TEXT_COLOR + "YOU WIN!")
+                    break
+                elif player_points < dealer_points:
+                    sound.play_game_over()
+                    print(_utils.TEXT_COLOR + "YOU HAVE LESS POINTS")
+                    print(_utils.TEXT_COLOR + "YOU LOSE")
+                    break
+                elif player_points == dealer_points:
+                    print(_utils.TEXT_COLOR + "ITS A TIE")
                     break
 
-        while True:
-            play_again_prompt = input("\nPLAY AGAIN? (Y/N): ")
-            sound.play_pluck()
-            play_again_prompt = play_again_prompt.lower()
+                hs_key_pressed = True
 
-            if play_again_prompt == "":
-                break
+        print(_utils.TEXT_COLOR + "PRESS [ENTER] TO PLAY AGAIN OR [ESC] TO QUIT")
 
-            if play_again_prompt != "y" and play_again_prompt != "n":
-                print(_Utils.TEXT_COLOR + f"'{play_again_prompt}' IS NOT Y OR N")
-                continue
-
-            if play_again_prompt == "y":
+        while play_again_key_pressed is False:
+            if keyboard.is_pressed("ENTER"):
+                sound.play_pluck()
                 play_again = True
-            else:
-                _utils.toggle_cursor()
+                play_again_key_pressed = True
+            elif keyboard.is_pressed("esc"):
                 _utils.clear_term()
                 sound.play_close_game()
-                print(_Utils.TEXT_COLOR + "GOODBYE 😈" + Fore.WHITE)
+                print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
                 time.sleep(1)
                 play_again = False
-            break
-    _utils.toggle_cursor()
+                play_again_key_pressed = True
 
 
 if __name__ == "__main__":
     main()
-
-# player_points = points_calculator.calculate_points(dealer.player_hand)
-# dealer_points = points_calculator.calculate_points(dealer.dealer_hand)
