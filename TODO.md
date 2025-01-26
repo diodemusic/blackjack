@@ -2,6 +2,8 @@
 
 ## Existing TODOs
 
+- [ ] ctrl+f "=" and add type hints to all vars
+- [ ] ctrl+f ")" and add type hints adn return hints to all methods
 - [ ] Dont allow blank username
 - [ ] Set charcter limit on username
 - [ ] make user input just pressing keys instead of using commands, then write something like h: hit s: stand
