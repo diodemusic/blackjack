@@ -3,7 +3,6 @@ import os
 import cursor
 from pygame import mixer  # This is only for playing audio
 from colorama import Fore
-import curses
 
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
