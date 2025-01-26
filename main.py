@@ -257,11 +257,9 @@ class PointsCalculator:
         return self.points
 
 
-class Match: ...  # TODO: move main logic to this Match class
-
-
-def main():
+class Match:
     play_again = True
+    play_again_key_pressed = False
 
     deck = Deck()
     dealer = Dealer(deck)
@@ -269,90 +267,116 @@ def main():
     _utils = _Utils()
     sound = SoundManager()
 
-    sound.play_menu()
-    _utils.start_menu()
-    sound.play_pluck()
-    _utils.prompt_for_username()
-    sound.play_pluck()
+    def init_game(self) -> None:
+        self.sound.play_menu()
+        self._utils.start_menu()
+        self.sound.play_pluck()
+        self._utils.prompt_for_username()
+        self.sound.play_pluck()
+        self.sound.stop_menu()
+        self.sound.play_in_game()
 
-    sound.stop_menu()
-    sound.play_in_game()
+    def deal_initial_hands(self) -> None:
+        self.sound.play_game_start()
+        self.sound.stop_in_game()
+        self.sound.play_in_game()
 
-    while play_again:
-        hs_key_pressed = False
-        play_again_key_pressed = False
+        self.dealer.dealer_hand = []
+        self.dealer.player_hand = []
 
-        _utils.clear_term()
-        sound.play_game_start()
-        sound.stop_in_game()
+        self.dealer.deal_card(dealer=True)
+        self.dealer.deal_card(dealer=True)
 
-        dealer.dealer_hand = []
-        dealer.player_hand = []
+        self.dealer.deal_card()
+        self.dealer.deal_card()
 
-        dealer.deal_card(dealer=True)
-        dealer.deal_card(dealer=True)
+        self.dealer.print_hands(self._utils.username)
 
-        dealer.deal_card()
-        dealer.deal_card()
+    def hit_or_stand(self) -> None:
+        while True:
+            print("\n" + self._utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
 
-        dealer.print_hands(_utils.username)
+            event = keyboard.read_event(suppress=True)
+
+            if event.event_type == "down":
+                if event.name == "h":
+                    self.sound.play_pluck()
+                    self.dealer.deal_card()
+                    self.dealer.print_hands(self._utils.username)
+
+                    player_points = self.points_calculator.calculate_points(
+                        self.dealer.player_hand
+                    )
+
+                    if player_points > 21:
+                        self.sound.stop_in_game()
+                        self.sound.play_game_over()
+                        print("\n" + self._utils.TEXT_COLOR + "BUST")
+                        break
+                    else:
+                        continue
+                elif event.name == "s":
+                    player_points = self.points_calculator.calculate_points(
+                        self.dealer.player_hand
+                    )
+                    dealer_points = self.points_calculator.calculate_points(
+                        self.dealer.dealer_hand
+                    )
+
+                    self.dealer.print_hands(
+                        self._utils.username, hide_dealer_card=False
+                    )
+
+                    self.sound.stop_in_game()
+
+                    if dealer_points > 21:
+                        print(self._utils.TEXT_COLOR + "DEALER BUST")
+                        print(self._utils.TEXT_COLOR + "YOU WIN!")
+                        break
+                    elif player_points > dealer_points:
+                        print(self._utils.TEXT_COLOR + "YOU HAVE MORE POINTS")
+                        print(self._utils.TEXT_COLOR + "YOU WIN!")
+                        break
+                    elif player_points < dealer_points:
+                        self.sound.play_game_over()
+                        print(self._utils.TEXT_COLOR + "YOU HAVE LESS POINTS")
+                        print(self._utils.TEXT_COLOR + "YOU LOSE")
+                        break
+                    elif player_points == dealer_points:
+                        print(self._utils.TEXT_COLOR + "ITS A TIE")
+                        break
+                else:
+                    continue
+
+    def game_over(self) -> None:
+        print(self._utils.TEXT_COLOR + "[ENTER]: PLAY AGAIN [ESC]: QUIT")
 
         while True:
-            if keyboard.is_pressed("h"):
-                sound.play_pluck()
-                dealer.deal_card()
-                dealer.print_hands(_utils.username)
+            event = keyboard.read_event(suppress=True)
 
-                player_points = points_calculator.calculate_points(dealer.player_hand)
-
-                if player_points > 21:
-                    sound.stop_in_game()
-                    sound.play_game_over()
-                    print(_utils.TEXT_COLOR + "BUST")
-
-                hs_key_pressed = True
-
-            elif keyboard.is_pressed("s"):
-                player_points = points_calculator.calculate_points(dealer.player_hand)
-                dealer_points = points_calculator.calculate_points(dealer.dealer_hand)
-
-                dealer.print_hands(_utils.username, hide_dealer_card=False)
-
-                sound.stop_in_game()
-
-                if dealer_points > 21:
-                    print(_utils.TEXT_COLOR + "DEALER BUST")
-                    print(_utils.TEXT_COLOR + "YOU WIN!")
+            if event.event_type == "down":
+                if event.name == "enter":
+                    self.sound.play_pluck()
                     break
-                elif player_points > dealer_points:
-                    print(_utils.TEXT_COLOR + "YOU HAVE MORE POINTS")
-                    print(_utils.TEXT_COLOR + "YOU WIN!")
-                    break
-                elif player_points < dealer_points:
-                    sound.play_game_over()
-                    print(_utils.TEXT_COLOR + "YOU HAVE LESS POINTS")
-                    print(_utils.TEXT_COLOR + "YOU LOSE")
-                    break
-                elif player_points == dealer_points:
-                    print(_utils.TEXT_COLOR + "ITS A TIE")
-                    break
+                elif event.name == "esc":
+                    self._utils.clear_term()
+                    self.sound.play_close_game()
+                    print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
+                    time.sleep(1)
+                    quit()
 
-                hs_key_pressed = True
+    def main(self) -> None:
+        while self.play_again:
+            self.init_game()
+            self.deal_initial_hands()
+            self.hit_or_stand()
+            self.game_over()
 
-        print(_utils.TEXT_COLOR + "PRESS [ENTER] TO PLAY AGAIN OR [ESC] TO QUIT")
 
-        while play_again_key_pressed is False:
-            if keyboard.is_pressed("ENTER"):
-                sound.play_pluck()
-                play_again = True
-                play_again_key_pressed = True
-            elif keyboard.is_pressed("esc"):
-                _utils.clear_term()
-                sound.play_close_game()
-                print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
-                time.sleep(1)
-                play_again = False
-                play_again_key_pressed = True
+def main():
+    match = Match()
+
+    match.main()
 
 
 if __name__ == "__main__":
