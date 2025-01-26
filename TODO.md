@@ -2,6 +2,7 @@
 
 ## Existing TODOs
 
+- [ ] Change the new game sound to something shorter and quieter
 - [ ] Add stand functionality
 - [ ] Add end game screen music after a bust
 - [ ] Count aces as 1 or 11 dynamically
