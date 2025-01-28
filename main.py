@@ -257,7 +257,11 @@ class PointsCalculator:
         return self.points
 
 
-class Match:
+class MainMenu:
+    pass
+
+
+class BlackjackGameManager:
     play_again = True
     play_again_key_pressed = False
 
@@ -272,14 +276,14 @@ class Match:
         self._utils.start_menu()
         self.sound.play_pluck()
         self._utils.prompt_for_username()
+
+    def start_game(self) -> None:
         self.sound.play_pluck()
         self.sound.stop_menu()
         self.sound.play_in_game()
 
     def deal_initial_hands(self) -> None:
         self.sound.play_game_start()
-        self.sound.stop_in_game()
-        self.sound.play_in_game()
 
         self.dealer.dealer_hand = []
         self.dealer.player_hand = []
@@ -293,9 +297,9 @@ class Match:
         self.dealer.print_hands(self._utils.username)
 
     def hit_or_stand(self) -> None:
-        while True:
-            print("\n" + self._utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
+        print("\n" + self._utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
 
+        while True:
             event = keyboard.read_event(suppress=True)
 
             if event.event_type == "down":
@@ -309,11 +313,11 @@ class Match:
                     )
 
                     if player_points > 21:
-                        self.sound.stop_in_game()
                         self.sound.play_game_over()
                         print("\n" + self._utils.TEXT_COLOR + "BUST")
                         break
                     else:
+                        print("\n" + self._utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
                         continue
                 elif event.name == "s":
                     player_points = self.points_calculator.calculate_points(
@@ -327,23 +331,21 @@ class Match:
                         self._utils.username, hide_dealer_card=False
                     )
 
-                    self.sound.stop_in_game()
-
                     if dealer_points > 21:
-                        print(self._utils.TEXT_COLOR + "DEALER BUST")
-                        print(self._utils.TEXT_COLOR + "YOU WIN!")
+                        print("\n" + self._utils.TEXT_COLOR + "DEALER BUST")
+                        print(self._utils.TEXT_COLOR + "YOU WIN!" + "\n")
                         break
                     elif player_points > dealer_points:
-                        print(self._utils.TEXT_COLOR + "YOU HAVE MORE POINTS")
-                        print(self._utils.TEXT_COLOR + "YOU WIN!")
+                        print("\n" + self._utils.TEXT_COLOR + "YOU HAVE MORE POINTS")
+                        print(self._utils.TEXT_COLOR + "YOU WIN!" + "\n")
                         break
                     elif player_points < dealer_points:
                         self.sound.play_game_over()
-                        print(self._utils.TEXT_COLOR + "YOU HAVE LESS POINTS")
-                        print(self._utils.TEXT_COLOR + "YOU LOSE")
+                        print("\n" + self._utils.TEXT_COLOR + "YOU HAVE LESS POINTS")
+                        print(self._utils.TEXT_COLOR + "YOU LOSE" + "\n")
                         break
                     elif player_points == dealer_points:
-                        print(self._utils.TEXT_COLOR + "ITS A TIE")
+                        print("\n" + self._utils.TEXT_COLOR + "ITS A TIE" + "\n")
                         break
                 else:
                     continue
@@ -359,25 +361,23 @@ class Match:
                     self.sound.play_pluck()
                     break
                 elif event.name == "esc":
+                    self.sound.stop_in_game()
                     self._utils.clear_term()
                     self.sound.play_close_game()
                     print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
                     time.sleep(1)
                     quit()
 
-    def main(self) -> None:
+    def play(self) -> None:
+        self.init_game()
+        self.start_game()
+
         while self.play_again:
-            self.init_game()
             self.deal_initial_hands()
             self.hit_or_stand()
             self.game_over()
 
 
-def main():
-    match = Match()
-
-    match.main()
-
-
 if __name__ == "__main__":
-    main()
+    blackjack = BlackjackGameManager()
+    blackjack.play()
