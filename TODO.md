@@ -2,12 +2,22 @@
 
 ## To Do
 
-- [ ] Change key listen input if statements to single if statements that use  dictionaries
+- [ ] Fix deck not resetting after game
+- [ ] Show dealers hand on player bust
+- [ ] Ensure the Match object attributes are reset on new match
+- [ ] If your points total 21 (blackjack) you auto win 1.5x your bet and the game is over
+- [ ] Once the dealer has gone around the table once flip up the face down card
+- [ ] If the dealer has < 17 points total, the dealer hits, if >= 17, stand
+- [ ] If the dealer busts, win 2x your bet and the game is over
+- [ ] Change key listen input if statements to single if statements that use dictionaries
 - [ ] Add a theme switcher
 - [ ] Change the new game sound to something shorter and quieter
 - [ ] Add __repr__() to classes
 - [ ] ctrl+f "=" and add type hints to all vars
 - [ ] ctrl+f ")" and add type hints adn return hints to all methods
+- [ ] Write docstrings and generate docs from them
+- [ ] Move print hands to _Utils class
+- [ ] Draw cards horizontally
 - [ ] Dont allow blank username
 - [ ] Set charcter limit on username
 - [ ] Only allow A-Z a-z chars
@@ -26,13 +36,14 @@
 
 ## In Progress
 
-- [ ] Count aces as 1 or 11 dynamically
 - [ ] Handle having 2 aces and rewrite player ace prompt
+- [ ] Toggle cursor off except when capturing user input with input()
 - [ ] Add end game screen music after a bust
 - [ ] Add more sounds; bust, win
 
 ## Done
 
+- [x] Count aces as 1 or 11 dynamically
 - [x] Add key up functionality to user input so prompts dont get spammed by pressing any key
 - [x] Add stand functionality
 - [x] make user input just pressing keys instead of using commands, then write something like h: hit s: stand
