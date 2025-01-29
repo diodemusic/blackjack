@@ -206,9 +206,10 @@ class Dealer(_Utils):
         self.player_hand: list[Card] = []
         self.card_spacing = 0
 
+    def __repr__(self):
+        return f"Dealer(deck={self.deck}, dealer_hand={self.dealer_hand}, player_hand={self.player_hand}, card_spacing={self.card_spacing})"
+
     def deal_card(self, dealer: bool = False) -> None:
-        # print("len: ", len(self.deck.cards))
-        # input("")
         card = self.deck.cards.pop(random.randrange(start=0, stop=len(self.deck.cards)))
 
         if not dealer:
@@ -275,8 +276,6 @@ class BlackjackGameManager:
     play_again = True
     play_again_key_pressed = False
 
-    deck = Deck()
-    dealer = Dealer(deck)
     points_calculator = PointsCalculator()
     _utils = _Utils()
     sound = SoundManager()
@@ -388,6 +387,9 @@ class BlackjackGameManager:
         self.start_game()
 
         while self.play_again:
+            self.deck = Deck()
+            self.dealer = Dealer(self.deck)
+
             self.deal_initial_hands()
             self.hit_or_stand()
             self.game_over()

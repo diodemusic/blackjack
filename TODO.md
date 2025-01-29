@@ -35,13 +35,13 @@
 
 ## In Progress
 
-- [ ] Fix deck not resetting after game
-- [ ] Ensure the Match object attributes are reset on new match
 - [ ] Add end game screen music after a bust
 - [ ] Add more sounds; bust, win
 
 ## Done
 
+- [x] Fix deck not resetting after game
+- [x] Ensure the dealer object attributes are reset on new match
 - [x] Toggle cursor off except when capturing user input with input()
 - [x] Handle having 2 aces and rewrite player ace prompt
 - [x] Count aces as 1 or 11 dynamically
