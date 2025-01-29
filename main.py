@@ -252,7 +252,14 @@ class PointsCalculator:
         self.points = 0
 
         for card in hand:
-            self.points += card.points
+            if card.name != "ace":
+                self.points += card.points
+
+        for card in hand:
+            if card.name == "ace":
+                if self.points >= 11:
+                    card.points = 1
+                    self.points += card.points
 
         return self.points
 
