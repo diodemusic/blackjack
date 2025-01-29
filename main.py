@@ -5,6 +5,7 @@ from pygame import mixer  # This is only for playing audio
 from colorama import Fore
 import time
 import keyboard
+import sys
 
 FACE_CARDS: dict[str:int] = {
     "ace": 11,
@@ -206,7 +207,9 @@ class Dealer(_Utils):
         self.card_spacing = 0
 
     def deal_card(self, dealer: bool = False) -> None:
-        card = self.deck.cards.pop(random.randrange(len(self.deck.cards)))
+        # print("len: ", len(self.deck.cards))
+        # input("")
+        card = self.deck.cards.pop(random.randrange(start=0, stop=len(self.deck.cards)))
 
         if not dealer:
             self.player_hand.append(card)
@@ -279,14 +282,18 @@ class BlackjackGameManager:
     sound = SoundManager()
 
     def init_game(self) -> None:
+        self._utils.toggle_cursor()
         self.sound.play_menu()
         self._utils.start_menu()
+
         self.sound.play_pluck()
+        self._utils.toggle_cursor()
         self._utils.prompt_for_username()
 
     def start_game(self) -> None:
         self.sound.play_pluck()
         self.sound.stop_menu()
+        self._utils.toggle_cursor()
         self.sound.play_in_game()
 
     def deal_initial_hands(self) -> None:
@@ -373,7 +380,8 @@ class BlackjackGameManager:
                     self.sound.play_close_game()
                     print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
                     time.sleep(1)
-                    quit()
+                    self._utils.toggle_cursor()
+                    sys.exit(1)
 
     def play(self) -> None:
         self.init_game()
