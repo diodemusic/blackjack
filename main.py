@@ -327,6 +327,9 @@ class BlackjackGameManager:
 
                     if player_points > 21:
                         self.sound.play_game_over()
+                        self.dealer.print_hands(
+                            self._utils.username, hide_dealer_card=False
+                        )
                         print("\n" + self._utils.TEXT_COLOR + "BUST")
                         break
                     else:
