@@ -2,7 +2,6 @@
 
 ## To Do
 
-- [ ] Modularize codebase
 - [ ] If your points total 21 (blackjack) you auto win 1.5x your bet and the game is over
 - [ ] Once the dealer has gone around the table once flip up the face down card
 - [ ] If the dealer has < 17 points total, the dealer hits, if >= 17, stand
@@ -36,6 +35,7 @@
 
 ## Done
 
+- [x] Modularize codebase
 - [x] Add type hints to all vars
 - [x] Add type hints and return values to all methods
 - [x] Write docstrings for all classes and methods and generate docs from them
