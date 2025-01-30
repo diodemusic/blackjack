@@ -13,11 +13,17 @@
                                             888P
 ```
 
+## Description
+
+This is a simple implementation of the classic Blackjack card game. The game is played between a dealer and one player.
+
 ## Features
 
 - Complete deck of cards with face cards and suits
 - Dealer to deal cards to players
 - Points calculator to calculate the points of a hand
+- Player can hit or stand
+- Dealer follows standard rules for hitting and standing
 - TODO list for future improvements
 
 ## Getting Started
@@ -54,7 +60,14 @@
 
 ## Contributing
 
-Contributions are welcome! Please check the TODO list for ideas on what to work on. Feel free to open an issue or submit a pull request.
+Contributions are welcome! Please check the TODO list for ideas on what to work on. To contribute:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature-branch`).
+6. Open a pull request.
 
 ## License
 
