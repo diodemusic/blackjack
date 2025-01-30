@@ -2,6 +2,7 @@
 
 ## To Do
 
+- [ ] Modularize codebase
 - [ ] If your points total 21 (blackjack) you auto win 1.5x your bet and the game is over
 - [ ] Once the dealer has gone around the table once flip up the face down card
 - [ ] If the dealer has < 17 points total, the dealer hits, if >= 17, stand
@@ -29,15 +30,15 @@
 
 ## In Progress
 
-- [ ] Write docstrings for all classes and methods and generate docs from them
 - [ ] Add __repr__() to all classes
-- [ ] ctrl+f "=" and add type hints to all vars
-- [ ] ctrl+f ")" and add type hints adn return hints to all methods
 - [ ] Show dealers hand on player bust
 - [ ] Add a theme switcher
 
 ## Done
 
+- [x] Add type hints to all vars
+- [x] Add type hints and return values to all methods
+- [x] Write docstrings for all classes and methods and generate docs from them
 - [x] Move main menu logic to Menu class
 - [x] Do not allow user to type on title screen
 - [x] Fix deck not resetting after game
