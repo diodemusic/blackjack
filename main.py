@@ -7,29 +7,12 @@ import time
 import keyboard
 import sys
 
-FACE_CARDS: dict[str:int] = {
-    "ace": 11,
-    "king": 10,
-    "queen": 10,
-    "jack": 10,
-}
-
-
-SUITS: list[str] = [
-    "hearts",
-    "diamonds",
-    "spades",
-    "clubs",
-]
-
 
 class _Utils:
     TEXT_PADDING: int = 80
     TEXT_COLOR: str = Fore.LIGHTRED_EX
     CARD_COLOR: str = Fore.WHITE
-
-    def __init__(self):
-        self.title = """88          88                       88        88                       88         
+    TITLE = """88          88                       88        88                       88         
 88          88                       88        ""                       88         
 88          88                       88                                 88         
 88,dPPYba,  88 ,adPPYYba,  ,adPPYba, 88   ,d8  88 ,adPPYYba,  ,adPPYba, 88   ,d8   
@@ -37,26 +20,12 @@ class _Utils:
 88       d8 88 ,adPPPPP88 8b         8888[     88 ,adPPPPP88 8b         8888[      
 88b,   ,a8" 88 88,    ,88 "8a,   ,aa 88`"Yba,  88 88,    ,88 "8a,   ,aa 88`"Yba,   
 8Y"Ybbd8"'  88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a 88 `"8bbdP"Y8  `"Ybbd8"' 88   `Y8a  
-                                              ,88                                  
-                                            888P\"""".center(self.TEXT_PADDING)
+                                            ,88                                  
+                                        888P\"""".center(TEXT_PADDING)
+    START_GAME_PROMPT = "PRESS [ENTER] TO PLAY...".center(TEXT_PADDING)
 
-        self.start_game_prompt = "PRESS [ENTER] TO PLAY...".center(self.TEXT_PADDING)
-        self.username = ""
-        self.cursor_off = False
-
-    def start_menu(self):
-        self.clear_term()
-        print(self.TEXT_COLOR + self.title + "\n")
-        print(self.TEXT_COLOR + self.start_game_prompt)
-        input()
-
-    def prompt_for_username(self) -> None:
-        self.clear_term()
-
-        print(self.title, "\n")
-        self.username = input(
-            "ENTER USERNAME: ".rjust(self.TEXT_PADDING // 2 + 4)
-        ).upper()
+    username = ""
+    cursor_off = False
 
     def toggle_cursor(self) -> None:
         if not self.cursor_off:
@@ -178,11 +147,24 @@ class Card:
 
 
 class Deck:
+    FACE_CARDS: dict[str:int] = {
+        "ace": 11,
+        "king": 10,
+        "queen": 10,
+        "jack": 10,
+    }
+    SUITS: list[str] = [
+        "hearts",
+        "diamonds",
+        "spades",
+        "clubs",
+    ]
+
     def __init__(self) -> None:
         self.cards: list[Card] = []
 
-        for suit in SUITS:
-            for face_card, value in FACE_CARDS.items():
+        for suit in self.SUITS:
+            for face_card, value in self.FACE_CARDS.items():
                 self.cards.append(
                     Card(
                         name=face_card,
@@ -199,7 +181,7 @@ class Deck:
         return f"Deck(cards={self.cards})"
 
 
-class Dealer(_Utils):
+class Match(_Utils):
     def __init__(self, deck: Deck) -> None:
         self.deck = deck
         self.dealer_hand: list[Card] = []
@@ -207,7 +189,7 @@ class Dealer(_Utils):
         self.card_spacing = 0
 
     def __repr__(self):
-        return f"Dealer(deck={self.deck}, dealer_hand={self.dealer_hand}, player_hand={self.player_hand}, card_spacing={self.card_spacing})"
+        return f"Match(deck={self.deck}, dealer_hand={self.dealer_hand}, player_hand={self.player_hand}, card_spacing={self.card_spacing})"
 
     def deal_card(self, dealer: bool = False) -> None:
         card = self.deck.cards.pop(random.randrange(start=0, stop=len(self.deck.cards)))
@@ -268,49 +250,64 @@ class PointsCalculator:
         return self.points
 
 
-class MainMenu:
+class MainMenu:  # TODO: impliment
     pass
 
 
-class BlackjackGameManager:
+class BlackjackGameManager(_Utils):
     play_again = True
     play_again_key_pressed = False
 
     points_calculator = PointsCalculator()
-    _utils = _Utils()
     sound = SoundManager()
 
-    def init_game(self) -> None:
-        self._utils.toggle_cursor()
+    def title_screen_menu(self) -> None:
         self.sound.play_menu()
-        self._utils.start_menu()
+        self.clear_term()
 
+        print(self.TEXT_COLOR + self.TITLE + "\n")
+        print(self.TEXT_COLOR + self.START_GAME_PROMPT)
+
+        while True:
+            event = keyboard.read_event(suppress=True)
+
+            if event.event_type == "down":
+                if event.name == "enter":
+                    self.sound.play_pluck()
+                    return
+                else:
+                    continue
+
+    def prompt_for_username_menu(self) -> None:
+        self.clear_term()
+
+        self.username = input(
+            "ENTER USERNAME: ".rjust(self.TEXT_PADDING // 2 + 4)
+        ).upper()
         self.sound.play_pluck()
-        self._utils.toggle_cursor()
-        self._utils.prompt_for_username()
 
     def start_game(self) -> None:
         self.sound.play_pluck()
         self.sound.stop_menu()
-        self._utils.toggle_cursor()
         self.sound.play_in_game()
+        self.toggle_cursor()
 
     def deal_initial_hands(self) -> None:
         self.sound.play_game_start()
 
-        self.dealer.dealer_hand = []
-        self.dealer.player_hand = []
+        self.match.dealer_hand = []
+        self.match.player_hand = []
 
-        self.dealer.deal_card(dealer=True)
-        self.dealer.deal_card(dealer=True)
+        self.match.deal_card(dealer=True)
+        self.match.deal_card(dealer=True)
 
-        self.dealer.deal_card()
-        self.dealer.deal_card()
+        self.match.deal_card()
+        self.match.deal_card()
 
-        self.dealer.print_hands(self._utils.username)
+        self.match.print_hands(self.username)
 
     def hit_or_stand(self) -> None:
-        print("\n" + self._utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
+        print("\n" + self.TEXT_COLOR + "[H]: HIT [S]: STAND")
 
         while True:
             event = keyboard.read_event(suppress=True)
@@ -318,56 +315,52 @@ class BlackjackGameManager:
             if event.event_type == "down":
                 if event.name == "h":
                     self.sound.play_pluck()
-                    self.dealer.deal_card()
-                    self.dealer.print_hands(self._utils.username)
+                    self.match.deal_card()
+                    self.match.print_hands(self.username)
 
                     player_points = self.points_calculator.calculate_points(
-                        self.dealer.player_hand
+                        self.match.player_hand
                     )
 
                     if player_points > 21:
                         self.sound.play_game_over()
-                        self.dealer.print_hands(
-                            self._utils.username, hide_dealer_card=False
-                        )
-                        print("\n" + self._utils.TEXT_COLOR + "BUST")
+                        self.match.print_hands(self.username, hide_dealer_card=False)
+                        print("\n" + self.TEXT_COLOR + "BUST")
                         break
                     else:
-                        print("\n" + self._utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
+                        print("\n" + self.TEXT_COLOR + "[H]: HIT [S]: STAND")
                         continue
                 elif event.name == "s":
                     player_points = self.points_calculator.calculate_points(
-                        self.dealer.player_hand
+                        self.match.player_hand
                     )
                     dealer_points = self.points_calculator.calculate_points(
-                        self.dealer.dealer_hand
+                        self.match.dealer_hand
                     )
 
-                    self.dealer.print_hands(
-                        self._utils.username, hide_dealer_card=False
-                    )
+                    self.match.print_hands(self.username, hide_dealer_card=False)
 
                     if dealer_points > 21:
-                        print("\n" + self._utils.TEXT_COLOR + "DEALER BUST")
-                        print(self._utils.TEXT_COLOR + "YOU WIN!" + "\n")
+                        print("\n" + self.TEXT_COLOR + "DEALER BUST")
+                        print(self.TEXT_COLOR + "YOU WIN!" + "\n")
                         break
                     elif player_points > dealer_points:
-                        print("\n" + self._utils.TEXT_COLOR + "YOU HAVE MORE POINTS")
-                        print(self._utils.TEXT_COLOR + "YOU WIN!" + "\n")
+                        print("\n" + self.TEXT_COLOR + "YOU HAVE MORE POINTS")
+                        print(self.TEXT_COLOR + "YOU WIN!" + "\n")
                         break
                     elif player_points < dealer_points:
                         self.sound.play_game_over()
-                        print("\n" + self._utils.TEXT_COLOR + "YOU HAVE LESS POINTS")
-                        print(self._utils.TEXT_COLOR + "YOU LOSE" + "\n")
+                        print("\n" + self.TEXT_COLOR + "YOU HAVE LESS POINTS")
+                        print(self.TEXT_COLOR + "YOU LOSE" + "\n")
                         break
                     elif player_points == dealer_points:
-                        print("\n" + self._utils.TEXT_COLOR + "ITS A TIE" + "\n")
+                        print("\n" + self.TEXT_COLOR + "ITS A TIE" + "\n")
                         break
                 else:
                     continue
 
     def game_over(self) -> None:
-        print(self._utils.TEXT_COLOR + "[ENTER]: PLAY AGAIN [ESC]: QUIT")
+        print(self.TEXT_COLOR + "[ENTER]: PLAY AGAIN [ESC]: QUIT")
 
         while True:
             event = keyboard.read_event(suppress=True)
@@ -378,20 +371,21 @@ class BlackjackGameManager:
                     break
                 elif event.name == "esc":
                     self.sound.stop_in_game()
-                    self._utils.clear_term()
+                    self.clear_term()
                     self.sound.play_close_game()
                     print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
                     time.sleep(1)
-                    self._utils.toggle_cursor()
+                    self.toggle_cursor()
                     sys.exit(1)
 
     def play(self) -> None:
-        self.init_game()
+        self.title_screen_menu()
+        self.prompt_for_username_menu()
         self.start_game()
 
         while self.play_again:
             self.deck = Deck()
-            self.dealer = Dealer(self.deck)
+            self.match = Match(self.deck)
 
             self.deal_initial_hands()
             self.hit_or_stand()

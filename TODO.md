@@ -2,19 +2,13 @@
 
 ## To Do
 
-- [ ] Do not allow user to type on title screen
-- [ ] Show dealers hand on player bust
 - [ ] If your points total 21 (blackjack) you auto win 1.5x your bet and the game is over
 - [ ] Once the dealer has gone around the table once flip up the face down card
 - [ ] If the dealer has < 17 points total, the dealer hits, if >= 17, stand
 - [ ] If the dealer busts, win 2x your bet and the game is over
 - [ ] Change key listen input if statements to single if statements that use dictionaries
-- [ ] Add a theme switcher
 - [ ] Change the new game sound to something shorter and quieter
-- [ ] Add __repr__() to all classes
-- [ ] ctrl+f "=" and add type hints to all vars
-- [ ] ctrl+f ")" and add type hints adn return hints to all methods
-- [ ] Write docstrings and generate docs from them
+- [ ] Add more sounds; bust, win
 - [ ] Move print hands to _Utils class
 - [ ] Draw cards horizontally
 - [ ] Dont allow blank username
@@ -35,10 +29,16 @@
 
 ## In Progress
 
-- [ ] Add more sounds; bust, win
+- [ ] Write docstrings for all classes and methods and generate docs from them
+- [ ] Add __repr__() to all classes
+- [ ] ctrl+f "=" and add type hints to all vars
+- [ ] ctrl+f ")" and add type hints adn return hints to all methods
+- [ ] Show dealers hand on player bust
+- [ ] Add a theme switcher
 
 ## Done
 
+- [x] Do not allow user to type on title screen
 - [x] Fix deck not resetting after game
 - [x] Ensure the deck and dealer object attributes are reset on new match
 - [x] Toggle cursor off except when capturing user input with input()
