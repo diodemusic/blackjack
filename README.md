@@ -52,7 +52,13 @@ This is a simple implementation of the classic Blackjack card game. The game is 
     pip install -r requirements.txt
     ```
 
-4. Run the game:
+4. Navigate to the correct directory
+
+    ```sh
+    cd src
+    ```
+
+5. Run the game:
 
     ```sh
     python main.py
