@@ -38,6 +38,7 @@
 
 ## Done
 
+- [x] Move main menu logic to Menu class
 - [x] Do not allow user to type on title screen
 - [x] Fix deck not resetting after game
 - [x] Ensure the deck and dealer object attributes are reset on new match

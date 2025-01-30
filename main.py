@@ -250,20 +250,11 @@ class PointsCalculator:
         return self.points
 
 
-class MainMenu:  # TODO: impliment
-    pass
-
-
-class BlackjackGameManager(_Utils):
-    play_again = True
-    play_again_key_pressed = False
-
-    points_calculator = PointsCalculator()
-    sound = SoundManager()
-
-    def title_screen_menu(self) -> None:
-        self.sound.play_menu()
+class MainMenu(_Utils, SoundManager):
+    def title_screen(self) -> None:
+        self.play_menu()
         self.clear_term()
+        self.toggle_cursor()
 
         print(self.TEXT_COLOR + self.TITLE + "\n")
         print(self.TEXT_COLOR + self.START_GAME_PROMPT)
@@ -273,18 +264,28 @@ class BlackjackGameManager(_Utils):
 
             if event.event_type == "down":
                 if event.name == "enter":
-                    self.sound.play_pluck()
+                    self.play_pluck()
                     return
                 else:
                     continue
 
-    def prompt_for_username_menu(self) -> None:
+    def prompt_for_username(self) -> None:
         self.clear_term()
+        self.toggle_cursor()
 
         self.username = input(
             "ENTER USERNAME: ".rjust(self.TEXT_PADDING // 2 + 4)
         ).upper()
-        self.sound.play_pluck()
+        self.play_pluck()
+        self.toggle_cursor()
+
+
+class BlackjackGameManager(_Utils):
+    play_again = True
+
+    points_calculator = PointsCalculator()
+    sound = SoundManager()
+    main_menu = MainMenu()
 
     def start_game(self) -> None:
         self.sound.play_pluck()
@@ -375,12 +376,13 @@ class BlackjackGameManager(_Utils):
                     self.sound.play_close_game()
                     print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
                     time.sleep(1)
+                    self.clear_term()
                     self.toggle_cursor()
                     sys.exit(1)
 
-    def play(self) -> None:
-        self.title_screen_menu()
-        self.prompt_for_username_menu()
+    def run(self) -> None:
+        self.main_menu.title_screen()
+        self.main_menu.prompt_for_username()
         self.start_game()
 
         while self.play_again:
@@ -394,4 +396,4 @@ class BlackjackGameManager(_Utils):
 
 if __name__ == "__main__":
     blackjack = BlackjackGameManager()
-    blackjack.play()
+    blackjack.run()
