@@ -35,7 +35,6 @@ class BlackjackGameManager(_Utils):
         """Initialise a match."""
 
         self.sound.play_pluck()
-        self.sound.stop_menu()
         self.sound.play_in_game()
         self.toggle_cursor()
 

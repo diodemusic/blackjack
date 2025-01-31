@@ -35,6 +35,7 @@
 
 ## Done
 
+- [x] Fix menu sound not stopping
 - [x] Modularize codebase
 - [x] Add type hints to all vars
 - [x] Add type hints and return values to all methods

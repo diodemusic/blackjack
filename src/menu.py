@@ -45,4 +45,5 @@ class MainMenu(_Utils, SoundManager):
             "ENTER USERNAME: ".rjust(self.TEXT_PADDING // 2 + 4)
         ).upper()
         self.play_pluck()
+        self.stop_menu()
         self.toggle_cursor()
