@@ -6,20 +6,20 @@ import time
 from colorama import Fore  # type: ignore
 import keyboard  # type: ignore
 
-from _utils import _Utils
+from utils import Utils
 from calculator import PointsCalculator
-from deck import Deck
+from deck import Card, Deck
 from match import Match
 from menu import MainMenu
 from sound import SoundManager
 
 
-class BlackjackGameManager(_Utils):
+class BlackjackGameManager(Utils):
     """
     Main game logic class.
 
     Args:
-        _Utils (class): Inherits the _Utils class.
+        Utils (class): Inherits the Utils class.
     """
 
     play_again = True
@@ -66,7 +66,9 @@ class BlackjackGameManager(_Utils):
         self.match.deal_card()
         self.match.print_hands(self.username)
 
-        player_points = self.points_calculator.calculate_points(self.match.player_hand)
+        player_points: int = self.points_calculator.calculate_points(
+            self.match.player_hand
+        )
 
         if player_points > 21:
             self.sound.play_game_over()
@@ -85,8 +87,12 @@ class BlackjackGameManager(_Utils):
             bool: Wether or not the game ended.
         """
 
-        player_points = self.points_calculator.calculate_points(self.match.player_hand)
-        dealer_points = self.points_calculator.calculate_points(self.match.dealer_hand)
+        player_points: int = self.points_calculator.calculate_points(
+            self.match.player_hand
+        )
+        dealer_points: int = self.points_calculator.calculate_points(
+            self.match.dealer_hand
+        )
 
         self.match.print_hands(self.username, hide_dealer_card=False)
 
@@ -117,7 +123,7 @@ class BlackjackGameManager(_Utils):
         print("\n" + self.TEXT_COLOR + "[H]: HIT [S]: STAND")
 
         while True:
-            event = keyboard.read_event(suppress=True)
+            event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
 
             if event.event_type != "down":
                 continue
@@ -134,7 +140,7 @@ class BlackjackGameManager(_Utils):
         self.sound.stop_in_game()
         self.clear_term()
         self.sound.play_close_game()
-        print(_Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
+        print(Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
         time.sleep(1)
         self.clear_term()
         self.toggle_cursor()
@@ -146,7 +152,7 @@ class BlackjackGameManager(_Utils):
         print(self.TEXT_COLOR + "[ENTER]: PLAY AGAIN [ESC]: QUIT")
 
         while True:
-            event = keyboard.read_event(suppress=True)
+            event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
 
             if event.event_type == "down":
                 if event.name == "enter":
@@ -165,7 +171,7 @@ class BlackjackGameManager(_Utils):
 
         while self.play_again:
             deck_object = Deck()
-            deck = deck_object.create_deck()
+            deck: list[Card] = deck_object.create_deck()
             self.match = Match(deck)
 
             self.deal_initial_hands()

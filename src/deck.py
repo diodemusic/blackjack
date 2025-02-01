@@ -33,35 +33,35 @@ class Card:
 |____?|"""
 
         if self.name == "10":
-            card_name = self.name[:2]
-            card_top = f""" _____
+            card_name: str = self.name[:2]
+            card_top: str = f""" _____
 |{card_name}   |"""
-            card_bottom = f"|___{card_name}|"
+            card_bottom: str = f"|___{card_name}|"
         else:
             card_name = self.name[0].upper()
             card_top = f""" _____
 |{card_name}    |"""
             card_bottom = f"|____{card_name}|"
 
-        heart_card = f"""{card_top}
+        heart_card: str = f"""{card_top}
 | ♥ ♥ |
 |♥ ♥ ♥|
 | ♥ ♥ |
 {card_bottom}"""
 
-        diamond_card = f"""{card_top}
+        diamond_card: str = f"""{card_top}
 | ♦ ♦ |
 |♦ ♦ ♦|
 | ♦ ♦ |
 {card_bottom}"""
 
-        spade_card = f"""{card_top}
+        spade_card: str = f"""{card_top}
 | ♠ ♠ |
 |♠ ♠ ♠|
 | ♠ ♠ |
 {card_bottom}"""
 
-        club_card = f"""{card_top}
+        club_card: str = f"""{card_top}
 | ♣ ♣ |
 |♣ ♣ ♣|
 | ♣ ♣ |

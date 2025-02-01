@@ -16,7 +16,7 @@ def get_path(file_name: str) -> str:
     Returns:
         str: Returns full relative path for the audio file.
     """
-    path = os.path.join("..", "audio", file_name)
+    path: str = os.path.join("..", "audio", file_name)
 
     return path
 

@@ -2,11 +2,11 @@
 
 import random
 
-from _utils import _Utils
+from utils import Utils
 from deck import Card
 
 
-class Match(_Utils):
+class Match(Utils):
     """
     Contains the game logic for dealing cards and printing them.
 
@@ -15,10 +15,10 @@ class Match(_Utils):
     """
 
     def __init__(self, deck: list[Card]) -> None:
-        self.deck = deck
+        self.deck: list[Card] = deck
         self.dealer_hand: list[Card] = []
         self.player_hand: list[Card] = []
-        self.card_spacing = 0
+        self.card_spacing: int = 0
 
     def __repr__(self) -> str:
         # pylint: disable=locally-disabled line-too-long
@@ -34,7 +34,7 @@ class Match(_Utils):
             Defaults to False.
         """
 
-        card = self.deck.pop(random.randrange(start=0, stop=len(self.deck)))
+        card: Card = self.deck.pop(random.randrange(start=0, stop=len(self.deck)))
 
         if not dealer:
             self.player_hand.append(card)
@@ -52,10 +52,10 @@ class Match(_Utils):
             Defaults to False.
         """
 
-        ascii_card = Card.get_ascii_card(card, hidden)
+        ascii_card: str = card.get_ascii_card(hidden)
 
         for line in ascii_card.splitlines():
-            print(_Utils.CARD_COLOR + " " * self.card_spacing, line)
+            print(Utils.CARD_COLOR + " " * self.card_spacing, line)
 
         self.card_spacing += 3
 
@@ -72,7 +72,7 @@ class Match(_Utils):
         self.card_spacing = 0
 
         self.clear_term()
-        print(_Utils.TEXT_COLOR + "\nDEALERS CARDS:")
+        print(Utils.TEXT_COLOR + "\nDEALERS CARDS:")
 
         self.print_card(self.dealer_hand[0])
         self.print_card(self.dealer_hand[1], hidden=hide_dealer_card)
@@ -82,7 +82,7 @@ class Match(_Utils):
 
         self.card_spacing = 0
 
-        print(_Utils.TEXT_COLOR + f"\n{username} CARDS:")
+        print(Utils.TEXT_COLOR + f"\n{username} CARDS:")
 
         for player_card in self.player_hand:
             self.print_card(player_card)

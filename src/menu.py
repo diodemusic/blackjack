@@ -2,11 +2,12 @@
 
 import keyboard  # type: ignore
 
-from _utils import _Utils
+from utils import Utils
 from sound import SoundManager
+# from user import UsersManager
 
 
-class MainMenu(_Utils, SoundManager):
+class MainMenu(Utils, SoundManager):
     """
     Main menu UI class.
 
@@ -14,6 +15,11 @@ class MainMenu(_Utils, SoundManager):
         _Utils (class): Inherits the _Utils class.
         SoundManager (class): Inherits the SoundManager class.
     """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.username = ""
 
     def title_screen(self) -> None:
         """Clear the terminal and print the main title screen."""
@@ -26,7 +32,7 @@ class MainMenu(_Utils, SoundManager):
         print(self.TEXT_COLOR + self.START_GAME_PROMPT)
 
         while True:
-            event = keyboard.read_event(suppress=True)
+            event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
 
             if event.event_type == "down":
                 if event.name == "enter":
