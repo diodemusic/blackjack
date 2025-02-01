@@ -2,6 +2,8 @@
 
 ## To Do
 
+- [ ] Check for player blackjack
+- [ ] A player blackjack wins immediately unless the dealer also has one, in which case the hand is a push. If the dealer is dealt blackjack, all players who do not have a blackjack lose.
 - [ ] If your points total 21 (blackjack) you auto win 1.5x your bet and the game is over
 - [ ] Once the dealer has gone around the table once flip up the face down card
 - [ ] If the dealer has < 17 points total, the dealer hits, if >= 17, stand
@@ -12,11 +14,10 @@
 - [ ] Move print hands to _Utils class
 - [ ] Draw cards horizontally
 - [ ] Dont allow blank username
+- [ ] Add __repr__() to all classes and add single quotes to strings
 - [ ] Set charcter limit on username
 - [ ] Only allow A-Z a-z chars
 - [ ] ENTER -> new game/load an existing save -> enter username if new game -> play
-- [ ] Implement betting system
-- [ ] Implement a method to display your current chips
 - [ ] Add a feature to save and load game state
 - [ ] Add Q: Save and quit
 - [ ] Implement unit tests for all classes and methods
@@ -29,12 +30,18 @@
 
 ## In Progress
 
-- [ ] Add __repr__() to all classes
+- [ ] Store usernames in database
+- [ ] Store themes on a per user basis
+- [ ] Store wins losses winrate and games played in user database entrys
+- [ ] Store users chips in user database entrys
+- [ ] Implement betting system
+- [ ] Implement a method to display your current chips
 - [ ] Show dealers hand on player bust
 - [ ] Add a theme switcher
 
 ## Done
 
+- [x] Create database for users
 - [x] Fix menu sound not stopping
 - [x] Modularize codebase
 - [x] Add type hints to all vars
