@@ -4,7 +4,7 @@ import keyboard  # type: ignore
 
 from utils import Utils
 from sound import SoundManager
-# from user import UsersManager
+from user import UsersManager
 
 
 class MainMenu(Utils, SoundManager):
@@ -47,9 +47,14 @@ class MainMenu(Utils, SoundManager):
         self.clear_term()
         self.toggle_cursor()
 
+        users_manager = UsersManager()
+
         self.username = input(
             "ENTER USERNAME: ".rjust(self.TEXT_PADDING // 2 + 4)
         ).upper()
+
+        users_manager.register(self.username)
+
         self.play_pluck()
         self.stop_menu()
         self.toggle_cursor()

@@ -30,17 +30,17 @@
 
 ## In Progress
 
-- [ ] Store usernames in database
-- [ ] Store themes on a per user basis
 - [ ] Store wins losses winrate and games played in user database entrys
 - [ ] Store users chips in user database entrys
 - [ ] Implement betting system
 - [ ] Implement a method to display your current chips
 - [ ] Show dealers hand on player bust
 - [ ] Add a theme switcher
+- [ ] Store themes on a per user basis
 
 ## Done
 
+- [x] Store usernames in database
 - [x] Create database for users
 - [x] Fix menu sound not stopping
 - [x] Modularize codebase

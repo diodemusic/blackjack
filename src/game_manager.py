@@ -52,7 +52,7 @@ class BlackjackGameManager(Utils):
         self.match.deal_card()
         self.match.deal_card()
 
-        self.match.print_hands(self.username)
+        self.match.print_hands(self.main_menu.username)
 
     def hit(self) -> bool:
         """
@@ -64,7 +64,7 @@ class BlackjackGameManager(Utils):
 
         self.sound.play_pluck()
         self.match.deal_card()
-        self.match.print_hands(self.username)
+        self.match.print_hands(self.main_menu.username)
 
         player_points: int = self.points_calculator.calculate_points(
             self.match.player_hand
@@ -72,7 +72,7 @@ class BlackjackGameManager(Utils):
 
         if player_points > 21:
             self.sound.play_game_over()
-            self.match.print_hands(self.username, hide_dealer_card=False)
+            self.match.print_hands(self.main_menu.username, hide_dealer_card=False)
             print("\n" + self.TEXT_COLOR + "BUST")
             return True
 
@@ -94,7 +94,7 @@ class BlackjackGameManager(Utils):
             self.match.dealer_hand
         )
 
-        self.match.print_hands(self.username, hide_dealer_card=False)
+        self.match.print_hands(self.main_menu.username, hide_dealer_card=False)
 
         if dealer_points > 21:
             print("\n" + self.TEXT_COLOR + "DEALER BUST")
