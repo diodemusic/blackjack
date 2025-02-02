@@ -45,6 +45,6 @@ class Chips:
 
         new_chips_balance: int = chips_balance + amount
 
-        print(f"New balance: {new_chips_balance} chips\n")
+        print(f"NEW BALANCE: {new_chips_balance} chips\n")
 
         self.db.update(username, "chips", new_chips_balance)

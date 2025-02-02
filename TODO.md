@@ -40,6 +40,7 @@
 
 ## Done
 
+- [x] Fix users database directory creation
 - [x] Implement betting system
 - [x] Display chip amount after a win or loss
 - [x] Store users chips in user database entrys

@@ -21,6 +21,9 @@ class Database:
     def create_json(self) -> None:
         """Creates a users.json file in users\\ if it doesn't already exist."""
 
+        if not os.path.exists("..\\users"):
+            os.makedirs("..\\users")
+
         if not os.path.isfile(self.PATH) and not os.access(self.PATH, os.R_OK):
             with io.open(self.PATH, "w", encoding=self.ENCODING) as db_f:
                 db_f.write(json.dumps([], indent=self.JSON_INDENT))
