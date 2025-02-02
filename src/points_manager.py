@@ -1,6 +1,6 @@
 """Points calculator module."""
 
-from deck import Card
+from deck_manager import Card
 
 
 class PointsCalculator:

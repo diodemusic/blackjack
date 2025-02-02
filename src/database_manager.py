@@ -3,7 +3,6 @@
 import io
 import json
 import os
-from typing import Any
 
 
 class Database:
@@ -17,7 +16,7 @@ class Database:
     def __init__(self) -> None:
         self.create_json()
 
-        self.users_list: list[dict[str, str]] = self.read()
+        self.users_list: list[dict[str, str | int]] = self.read()
 
     def create_json(self) -> None:
         """Creates a users.json file in users\\ if it doesn't already exist."""
@@ -26,7 +25,7 @@ class Database:
             with io.open(self.PATH, "w", encoding=self.ENCODING) as db_f:
                 db_f.write(json.dumps([], indent=self.JSON_INDENT))
 
-    def read(self) -> Any:
+    def read(self) -> list[dict[str, str | int]]:
         """
         Read users.json file.
 
@@ -35,11 +34,11 @@ class Database:
         """
 
         with open(self.PATH, "r", encoding=self.ENCODING) as f:
-            user_database: Any = json.load(f)
+            user_database: list[dict[str, str | int]] = json.load(f)
 
         return user_database
 
-    def create(self, content: dict[str, str]) -> None:
+    def create(self, content: dict[str, str | int]) -> None:
         """
         Write dict content to users file.
 
@@ -49,5 +48,23 @@ class Database:
 
         with open(self.PATH, "w", encoding=self.ENCODING) as f:
             self.users_list.append(content)
-            print(self.users_list)
             json.dump(self.users_list, f, indent=self.JSON_INDENT)
+
+    def update(self, username: str, key: str, value: str | int) -> None:
+        """
+        Update a dict in the users.json list.
+
+        Args:
+            username (str): Username string.
+            key (str): Dict key of the value you want to change.
+            value (str | int): The new value.
+        """
+
+        users: list[dict[str, str | int]] = self.read()
+
+        for user in users:
+            if user.get("username") == username:
+                user[key] = value
+
+        with open(self.PATH, "w", encoding=self.ENCODING) as f:
+            json.dump(users, f, indent=self.JSON_INDENT)

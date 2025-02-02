@@ -2,11 +2,11 @@
 
 import random
 
-from utils import Utils
-from deck import Card
+from utils_manager import Utils
+from deck_manager import Card
 
 
-class Match(Utils):
+class Match:
     """
     Contains the game logic for dealing cards and printing them.
 
@@ -15,6 +15,8 @@ class Match(Utils):
     """
 
     def __init__(self, deck: list[Card]) -> None:
+        self.utils = Utils()
+
         self.deck: list[Card] = deck
         self.dealer_hand: list[Card] = []
         self.player_hand: list[Card] = []
@@ -71,7 +73,7 @@ class Match(Utils):
 
         self.card_spacing = 0
 
-        self.clear_term()
+        self.utils.clear_term()
         print(Utils.TEXT_COLOR + "\nDEALERS CARDS:")
 
         self.print_card(self.dealer_hand[0])

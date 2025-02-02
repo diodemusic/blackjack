@@ -30,9 +30,9 @@
 
 ## In Progress
 
+- [ ] Do not allow chips to go under 0
+- [ ] Check that a user has enough chips for their bet
 - [ ] Store wins losses winrate and games played in user database entrys
-- [ ] Store users chips in user database entrys
-- [ ] Implement betting system
 - [ ] Implement a method to display your current chips
 - [ ] Show dealers hand on player bust
 - [ ] Add a theme switcher
@@ -40,6 +40,9 @@
 
 ## Done
 
+- [x] Implement betting system
+- [x] Display chip amount after a win or loss
+- [x] Store users chips in user database entrys
 - [x] Store usernames in database
 - [x] Create database for users
 - [x] Fix menu sound not stopping

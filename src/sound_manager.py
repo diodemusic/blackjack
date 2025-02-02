@@ -34,20 +34,20 @@ class PathManager:
         self.close_game_path = get_path("close_game.mp3")
 
 
-class SoundManager(PathManager):
+class SoundManager:
     """Load and play audio files."""
 
     mixer.init()
 
     def __init__(self) -> None:
-        super().__init__()
+        self.path_manager = PathManager()
 
-        self.menu = mixer.Sound(self.menu_path)
-        self.pluck = mixer.Sound(self.pluck_path)
-        self.game_start = mixer.Sound(self.game_start_path)
-        self.in_game = mixer.Sound(self.in_game_path)
-        self.game_over = mixer.Sound(self.game_over_path)
-        self.close_game = mixer.Sound(self.close_game_path)
+        self.menu = mixer.Sound(self.path_manager.menu_path)
+        self.pluck = mixer.Sound(self.path_manager.pluck_path)
+        self.game_start = mixer.Sound(self.path_manager.game_start_path)
+        self.in_game = mixer.Sound(self.path_manager.in_game_path)
+        self.game_over = mixer.Sound(self.path_manager.game_over_path)
+        self.close_game = mixer.Sound(self.path_manager.close_game_path)
 
     def play_menu(self) -> None:
         """Plays the menu music audio file: menu.mp3"""
