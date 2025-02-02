@@ -1,11 +1,12 @@
 """Main menu module."""
 
-from typing import Literal
 import keyboard  # type: ignore
+from typing import Literal
 
-from utils_manager import Utils
+from chips_manager import Chips
 from sound_manager import SoundManager
 from users_manager import UsersManager
+from utils_manager import Utils
 
 
 class MainMenu:
@@ -20,6 +21,7 @@ class MainMenu:
     def __init__(self) -> None:
         self.utils = Utils()
         self.snd = SoundManager()
+        self.chps = Chips()
 
         self.username: str | Literal[""] = ""
 
@@ -66,6 +68,12 @@ class MainMenu:
 
         self.utils.clear_term()
         self.utils.toggle_cursor()
+
+        print(
+            f"CURRENT BALANCE: {self.chps.get_chips(self.username)}\n".rjust(
+                self.utils.TEXT_PADDING // 2 + 9
+            )
+        )
 
         bet: int = int(input("ENTER BET: ".rjust(self.utils.TEXT_PADDING // 2 + 4)))
 
