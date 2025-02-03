@@ -1,10 +1,10 @@
-"""Chips module."""
+"""Match history module."""
 
 from database_manager import Database
 from users_manager import UsersManager
 
 
-class WinRate:
+class MatchHistory:
     """Handles the users chips."""
 
     def __init__(self) -> None:
@@ -30,6 +30,7 @@ class WinRate:
             return
 
         self.db.update(username, "wins", wins + 1)
+        self.add_game_played(username)
 
     def add_loss(self, username: str) -> None:
         """
@@ -50,6 +51,7 @@ class WinRate:
             return
 
         self.db.update(username, "losses", losses + 1)
+        self.add_game_played(username)
 
     def add_game_played(self, username: str) -> None:
         """
