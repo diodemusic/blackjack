@@ -14,6 +14,7 @@ class Chips:
     def get_chips(self, username: str) -> str | int | None:
         """
         Get the users chips amount.
+        If the user has 0 chips, give them 1000.
 
         Args:
             username (str): Username.
@@ -24,10 +25,13 @@ class Chips:
 
         user: dict[str, str | int] | None = self.usrs.get_user(username)
 
-        if user:
-            return user.get("chips")
+        if not user:
+            return None
 
-        return None
+        if user.get("chips") == 0:
+            user["chips"] = 1000
+
+        return user.get("chips")
 
     def add_or_remove_chips(self, username: str, amount: int) -> None:
         """
