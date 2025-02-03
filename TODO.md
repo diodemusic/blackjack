@@ -30,8 +30,7 @@
 
 ## In Progress
 
-- [ ] Do not allow chips to go under 0
-- [ ] Check that a user has enough chips for their bet
+- [ ] If a user has 0 chips, give them 100
 - [ ] Store wins losses winrate and games played in user database entrys
 - [ ] Implement a method to display your current chips
 - [ ] Show dealers hand on player bust
@@ -40,6 +39,10 @@
 
 ## Done
 
+- [x] Ensure bet is an integer
+- [x] Do not allow chips to go under 0
+- [x] Check that a user has enough chips for their bet
+- [x] Show current balance on bet screen
 - [x] Fix users database directory creation
 - [x] Implement betting system
 - [x] Display chip amount after a win or loss
