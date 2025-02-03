@@ -13,7 +13,7 @@ from menu_manager import MainMenu
 from points_manager import PointsCalculator
 from sound_manager import SoundManager
 from utils_manager import Utils
-from winrate_manager import WinRate
+from match_history_manager import MatchHistory
 
 
 class BlackjackGameManager:
@@ -33,7 +33,7 @@ class BlackjackGameManager:
         self.pnts = PointsCalculator()
         self.snd = SoundManager()
         self.utils = Utils()
-        self.wr = WinRate()
+        self.match_history = MatchHistory()
 
         self.match: Match
 
@@ -68,8 +68,7 @@ class BlackjackGameManager:
         print(self.utils.TEXT_COLOR + "YOU WIN!" + "\n")
         self.chps.add_or_remove_chips(self.mnu.username, self.bet)
 
-        self.wr.add_win(self.mnu.username)
-        self.wr.add_game_played(self.mnu.username)
+        self.match_history.add_win(self.mnu.username)
 
         return True
 
@@ -81,8 +80,7 @@ class BlackjackGameManager:
         print(self.utils.TEXT_COLOR + "YOU LOSE" + "\n")
         self.chps.add_or_remove_chips(self.mnu.username, -self.bet)
 
-        self.wr.add_loss(self.mnu.username)
-        self.wr.add_game_played(self.mnu.username)
+        self.match_history.add_loss(self.mnu.username)
 
         return True
 
@@ -140,7 +138,7 @@ class BlackjackGameManager:
         if player_points == dealer_points:
             print("\n" + self.utils.TEXT_COLOR + "ITS A TIE" + "\n")
 
-            self.wr.add_game_played(self.mnu.username)
+            self.match_history.add_game_played(self.mnu.username)
 
             return True
 
@@ -206,5 +204,5 @@ class BlackjackGameManager:
             self.bet: int = self.mnu.prompt_for_bet()
             self.deal_initial_hands()
             self.hit_or_stand()
-            self.wr.update_winrate(self.mnu.username)
+            self.match_history.update_winrate(self.mnu.username)
             self.game_over_prompt()
