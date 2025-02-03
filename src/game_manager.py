@@ -13,6 +13,7 @@ from menu_manager import MainMenu
 from points_manager import PointsCalculator
 from sound_manager import SoundManager
 from utils_manager import Utils
+from winrate_manager import WinRate
 
 
 class BlackjackGameManager:
@@ -27,11 +28,12 @@ class BlackjackGameManager:
     bet: int = 0
 
     def __init__(self) -> None:
+        self.chps = Chips()
+        self.mnu = MainMenu()
         self.pnts = PointsCalculator()
         self.snd = SoundManager()
-        self.mnu = MainMenu()
-        self.chps = Chips()
         self.utils = Utils()
+        self.wr = WinRate()
 
         self.match: Match
 
@@ -58,6 +60,32 @@ class BlackjackGameManager:
 
         self.match.print_hands(self.mnu.username)
 
+    def win(self) -> bool:
+        """Logic for winning."""
+
+        self.snd.play_game_over()
+
+        print(self.utils.TEXT_COLOR + "YOU WIN!" + "\n")
+        self.chps.add_or_remove_chips(self.mnu.username, self.bet)
+
+        self.wr.add_win(self.mnu.username)
+        self.wr.add_game_played(self.mnu.username)
+
+        return True
+
+    def lose(self) -> bool:
+        """Logic for losing."""
+
+        self.snd.play_game_over()
+
+        print(self.utils.TEXT_COLOR + "YOU LOSE" + "\n")
+        self.chps.add_or_remove_chips(self.mnu.username, -self.bet)
+
+        self.wr.add_loss(self.mnu.username)
+        self.wr.add_game_played(self.mnu.username)
+
+        return True
+
     def hit(self) -> bool:
         """
         Handles the logic for hitting.
@@ -80,26 +108,6 @@ class BlackjackGameManager:
 
         print("\n" + self.utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
         return False
-
-    def win(self) -> bool:
-        """Logic for winning."""
-
-        self.snd.play_game_over()
-
-        print(self.utils.TEXT_COLOR + "YOU WIN!" + "\n")
-        self.chps.add_or_remove_chips(self.mnu.username, self.bet)
-
-        return True
-
-    def lose(self) -> bool:
-        """Logic for losing."""
-
-        self.snd.play_game_over()
-
-        print(self.utils.TEXT_COLOR + "YOU LOSE" + "\n")
-        self.chps.add_or_remove_chips(self.mnu.username, -self.bet)
-
-        return True
 
     def stand(self) -> bool:
         """
@@ -131,6 +139,9 @@ class BlackjackGameManager:
 
         if player_points == dealer_points:
             print("\n" + self.utils.TEXT_COLOR + "ITS A TIE" + "\n")
+
+            self.wr.add_game_played(self.mnu.username)
+
             return True
 
         return False
@@ -195,4 +206,5 @@ class BlackjackGameManager:
             self.bet: int = self.mnu.prompt_for_bet()
             self.deal_initial_hands()
             self.hit_or_stand()
+            self.wr.update_winrate(self.mnu.username)
             self.game_over_prompt()

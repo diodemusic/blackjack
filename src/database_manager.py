@@ -16,7 +16,7 @@ class Database:
     def __init__(self) -> None:
         self.create_json()
 
-        self.users_list: list[dict[str, str | int]] = self.read()
+        self.users_list: list[dict[str, str | int | float]] = self.read()
 
     def create_json(self) -> None:
         """Creates a users.json file in users\\ if it doesn't already exist."""
@@ -28,7 +28,7 @@ class Database:
             with io.open(self.PATH, "w", encoding=self.ENCODING) as db_f:
                 db_f.write(json.dumps([], indent=self.JSON_INDENT))
 
-    def read(self) -> list[dict[str, str | int]]:
+    def read(self) -> list[dict[str, str | int | float]]:
         """
         Read users.json file.
 
@@ -37,11 +37,11 @@ class Database:
         """
 
         with open(self.PATH, "r", encoding=self.ENCODING) as f:
-            user_database: list[dict[str, str | int]] = json.load(f)
+            user_database: list[dict[str, str | int | float]] = json.load(f)
 
         return user_database
 
-    def create(self, content: dict[str, str | int]) -> None:
+    def create(self, content: dict[str, str | int | float]) -> None:
         """
         Write dict content to users file.
 
@@ -53,7 +53,7 @@ class Database:
             self.users_list.append(content)
             json.dump(self.users_list, f, indent=self.JSON_INDENT)
 
-    def update(self, username: str, key: str, value: str | int) -> None:
+    def update(self, username: str, key: str, value: str | int | float) -> None:
         """
         Update a dict in the users.json list.
 
@@ -63,10 +63,10 @@ class Database:
             value (str | int): The new value.
         """
 
-        users: list[dict[str, str | int]] = self.read()
+        users: list[dict[str, str | int | float]] = self.read()
 
         for user in users:
-            if user.get("username") == username:
+            if user.get("username", "username") == username:
                 user[key] = value
 
         with open(self.PATH, "w", encoding=self.ENCODING) as f:

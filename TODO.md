@@ -30,7 +30,6 @@
 
 ## In Progress
 
-- [ ] Store wins losses winrate and games played in user database entrys
 - [ ] Implement a method to display your current chips
 - [ ] Show dealers hand on player bust
 - [ ] Add a theme switcher
@@ -38,6 +37,7 @@
 
 ## Done
 
+- [x] Store wins, losse,s winrate, and games played in database
 - [x] If a user has 0 chips, give them 1000
 - [x] Ensure bet is an integer
 - [x] Do not allow chips to go under 0

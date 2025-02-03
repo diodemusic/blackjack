@@ -11,7 +11,7 @@ class Chips:
         self.db = Database()
         self.usrs = UsersManager()
 
-    def get_chips(self, username: str) -> str | int | None:
+    def get_chips(self, username: str) -> str | int | float:
         """
         Get the users chips amount.
         If the user has 0 chips, give them 1000.
@@ -23,15 +23,15 @@ class Chips:
             str | int | None: Chips amount.
         """
 
-        user: dict[str, str | int] | None = self.usrs.get_user(username)
+        user: dict[str, str | int | float] = self.usrs.get_user(username)
 
         if not user:
-            return None
+            return 0
 
-        if user.get("chips") == 0:
+        if user.get("chips", 0) == 0:
             user["chips"] = 1000
 
-        return user.get("chips")
+        return user.get("chips", 0)
 
     def add_or_remove_chips(self, username: str, amount: int) -> None:
         """
@@ -42,7 +42,7 @@ class Chips:
             amount (int): Amount of chips to add to the users balance.
         """
 
-        chips_balance: str | int | None = self.get_chips(username)
+        chips_balance: str | int | float = self.get_chips(username)
 
         if not isinstance(chips_balance, int):
             return

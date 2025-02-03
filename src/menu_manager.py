@@ -78,13 +78,13 @@ class MainMenu:
         time.sleep(2)
         self.prompt_for_bet()
 
-    def prompt_for_bet(self) -> int | None:
+    def prompt_for_bet(self) -> int:
         """Clear the terminal and ask the user for a bet."""
 
         self.utils.clear_term()
         self.utils.toggle_cursor()
 
-        current_balance: str | int | None = self.chps.get_chips(self.username)
+        current_balance: str | int | float = self.chps.get_chips(self.username)
 
         print(
             f"CURRENT BALANCE: {current_balance}\n".rjust(
@@ -101,7 +101,7 @@ class MainMenu:
             self.bet_error("BET MUST BE A NUMBER")
 
         if not isinstance(current_balance, int):
-            return None
+            return 0
 
         if bet > current_balance:
             self.bet_error("BET CANNOT EXCEED BALANCE.")
