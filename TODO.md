@@ -30,14 +30,17 @@
 
 ## In Progress
 
-- [ ] Implement a method to display your current chips
-- [ ] Show dealers hand on player bust
+- [ ] Create a private utility program for creating my own new themes
 - [ ] Add a theme switcher
 - [ ] Store themes on a per user basis
+- [ ] Encrypt chip amount
 
 ## Done
 
-- [x] Store wins, losse,s winrate, and games played in database
+- [x] Impliment theme logic
+- [x] Show dealers hand on player bust
+- [x] Implement a method to display your current chips
+- [x] Store wins, losses, winrate, and games played in database
 - [x] If a user has 0 chips, give them 1000
 - [x] Ensure bet is an integer
 - [x] Do not allow chips to go under 0

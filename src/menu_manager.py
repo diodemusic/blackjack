@@ -7,6 +7,7 @@ import keyboard  # type: ignore
 
 from chips_manager import Chips
 from sound_manager import SoundManager
+from theme_manager import Theme
 from users_manager import UsersManager
 from utils_manager import Utils
 
@@ -21,28 +22,29 @@ class MainMenu:
     """
 
     def __init__(self) -> None:
+        self.chips = Chips()
+        self.sound = SoundManager()
+        self.theme = Theme()
         self.utils = Utils()
-        self.snd = SoundManager()
-        self.chps = Chips()
 
         self.username: str | Literal[""] = ""
 
     def title_screen(self) -> None:
         """Clear the terminal and print the main title screen."""
 
-        self.snd.play_menu()
+        self.sound.play_menu()
         self.utils.clear_term()
         self.utils.toggle_cursor()
 
-        print(self.utils.TEXT_COLOR + self.utils.TITLE + "\n")
-        print(self.utils.TEXT_COLOR + self.utils.START_GAME_PROMPT)
+        print(self.theme.text_color + self.utils.TITLE + "\n")
+        print(self.theme.text_color + self.utils.START_GAME_PROMPT)
 
         while True:
             event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
 
             if event.event_type == "down":
                 if event.name == "enter":
-                    self.snd.play_pluck()
+                    self.sound.play_pluck()
                     return
 
                 continue
@@ -61,9 +63,11 @@ class MainMenu:
 
         users_manager.register(self.username)
 
-        self.snd.play_pluck()
-        self.snd.stop_menu()
+        self.sound.play_pluck()
+        self.sound.stop_menu()
         self.utils.toggle_cursor()
+
+        self.theme.set_theme(self.username, self.theme.theme_1)
 
     def bet_error(self, message: str) -> None:
         """
@@ -74,7 +78,11 @@ class MainMenu:
         """
 
         self.utils.toggle_cursor()
-        print("\n" + message.center(self.utils.TEXT_PADDING // 2 + 37))
+        print(
+            "\n"
+            + self.theme.text_color
+            + message.center(self.utils.TEXT_PADDING // 2 + 37)
+        )
         time.sleep(2)
         self.prompt_for_bet()
 
@@ -84,10 +92,10 @@ class MainMenu:
         self.utils.clear_term()
         self.utils.toggle_cursor()
 
-        current_balance: str | int | float = self.chps.get_chips(self.username)
+        current_balance: str | int | float = self.chips.get_chips(self.username)
 
         print(
-            f"CURRENT BALANCE: {current_balance}\n".rjust(
+            f"{self.theme.text_color} CURRENT BALANCE: {current_balance}\n".rjust(
                 self.utils.TEXT_PADDING // 2 + 9
             )
         )
@@ -108,8 +116,8 @@ class MainMenu:
         if bet <= 0:
             self.bet_error("BET MUST BE GREATER THAN 0.")
 
-        self.snd.play_pluck()
-        self.snd.stop_menu()
+        self.sound.play_pluck()
+        self.sound.stop_menu()
         self.utils.toggle_cursor()
 
         return bet

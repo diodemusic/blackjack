@@ -1,5 +1,7 @@
 """UsersManager module."""
 
+from colorama import Fore  # type: ignore
+
 from database_manager import Database
 
 
@@ -44,5 +46,8 @@ class UsersManager:
                 "losses": 0,
                 "games_played": 0,
                 "winrate": 0.1,
+                "text_color": Fore.WHITE,
+                "card_color": Fore.WHITE,
+                "background_color": Fore.BLACK,
             }
         )

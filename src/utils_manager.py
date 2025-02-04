@@ -3,7 +3,6 @@
 import os
 from typing import LiteralString
 
-from colorama import Fore  # type: ignore
 import cursor  # type: ignore
 
 
@@ -11,8 +10,6 @@ class Utils:
     """Utility attributes and methods."""
 
     TEXT_PADDING: int = 80
-    TEXT_COLOR: str = Fore.LIGHTRED_EX
-    CARD_COLOR: str = Fore.WHITE
     TITLE: LiteralString = """
 88          88                       88        88                       88
 88          88                       88        ""                       88         

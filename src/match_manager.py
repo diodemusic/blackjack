@@ -2,8 +2,9 @@
 
 import random
 
-from utils_manager import Utils
 from deck_manager import Card
+from theme_manager import Theme
+from utils_manager import Utils
 
 
 class Match:
@@ -15,12 +16,13 @@ class Match:
     """
 
     def __init__(self, deck: list[Card]) -> None:
+        self.theme = Theme()
         self.utils = Utils()
 
+        self.card_spacing: int = 0
         self.deck: list[Card] = deck
         self.dealer_hand: list[Card] = []
         self.player_hand: list[Card] = []
-        self.card_spacing: int = 0
 
     def __repr__(self) -> str:
         # pylint: disable=locally-disabled line-too-long
@@ -57,7 +59,7 @@ class Match:
         ascii_card: str = card.get_ascii_card(hidden)
 
         for line in ascii_card.splitlines():
-            print(Utils.CARD_COLOR + " " * self.card_spacing, line)
+            print(self.theme.card_color + " " * self.card_spacing, line)
 
         self.card_spacing += 3
 
@@ -74,7 +76,7 @@ class Match:
         self.card_spacing = 0
 
         self.utils.clear_term()
-        print(Utils.TEXT_COLOR + "\nDEALERS CARDS:")
+        print(self.theme.text_color + "\nDEALERS CARDS:")
 
         self.print_card(self.dealer_hand[0])
         self.print_card(self.dealer_hand[1], hidden=hide_dealer_card)
@@ -84,7 +86,7 @@ class Match:
 
         self.card_spacing = 0
 
-        print(Utils.TEXT_COLOR + f"\n{username} CARDS:")
+        print(self.theme.text_color + f"\n{username} CARDS:")
 
         for player_card in self.player_hand:
             self.print_card(player_card)

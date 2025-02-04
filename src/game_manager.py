@@ -12,6 +12,7 @@ from match_manager import Match
 from menu_manager import MainMenu
 from points_manager import PointsCalculator
 from sound_manager import SoundManager
+from theme_manager import Theme
 from utils_manager import Utils
 from match_history_manager import MatchHistory
 
@@ -28,26 +29,27 @@ class BlackjackGameManager:
     bet: int = 0
 
     def __init__(self) -> None:
-        self.chps = Chips()
-        self.mnu = MainMenu()
-        self.pnts = PointsCalculator()
-        self.snd = SoundManager()
-        self.utils = Utils()
+        self.chips = Chips()
         self.match_history = MatchHistory()
+        self.menu = MainMenu()
+        self.points = PointsCalculator()
+        self.sound = SoundManager()
+        self.theme = Theme()
+        self.utils = Utils()
 
         self.match: Match
 
     def start_match(self) -> None:
         """Initialise a match."""
 
-        self.snd.play_pluck()
-        self.snd.play_in_game()
+        self.sound.play_pluck()
+        self.sound.play_in_game()
         self.utils.toggle_cursor()
 
     def deal_initial_hands(self) -> None:
         """Deal the initial hands to the dealer and player."""
 
-        self.snd.play_game_start()
+        self.sound.play_game_start()
 
         self.match.dealer_hand = []
         self.match.player_hand = []
@@ -58,29 +60,29 @@ class BlackjackGameManager:
         self.match.deal_card()
         self.match.deal_card()
 
-        self.match.print_hands(self.mnu.username)
+        self.match.print_hands(self.menu.username)
 
     def win(self) -> bool:
         """Logic for winning."""
 
-        self.snd.play_game_over()
+        self.sound.play_game_over()
 
-        print(self.utils.TEXT_COLOR + "YOU WIN!" + "\n")
-        self.chps.add_or_remove_chips(self.mnu.username, self.bet)
+        print(self.theme.text_color + "YOU WIN!" + "\n")
+        self.chips.add_or_remove_chips(self.menu.username, self.bet)
 
-        self.match_history.add_win(self.mnu.username)
+        self.match_history.add_win(self.menu.username)
 
         return True
 
     def lose(self) -> bool:
         """Logic for losing."""
 
-        self.snd.play_game_over()
+        self.sound.play_game_over()
 
-        print(self.utils.TEXT_COLOR + "YOU LOSE" + "\n")
-        self.chps.add_or_remove_chips(self.mnu.username, -self.bet)
+        print(self.theme.text_color + "YOU LOSE" + "\n")
+        self.chips.add_or_remove_chips(self.menu.username, -self.bet)
 
-        self.match_history.add_loss(self.mnu.username)
+        self.match_history.add_loss(self.menu.username)
 
         return True
 
@@ -92,19 +94,19 @@ class BlackjackGameManager:
             bool: Wether or not the player busted.
         """
 
-        self.snd.play_pluck()
+        self.sound.play_pluck()
         self.match.deal_card()
-        self.match.print_hands(self.mnu.username)
+        self.match.print_hands(self.menu.username)
 
-        player_points: int = self.pnts.calculate_points(self.match.player_hand)
+        player_points: int = self.points.calculate_points(self.match.player_hand)
 
         if player_points > 21:
-            self.match.print_hands(self.mnu.username, hide_dealer_card=False)
-            print("\n" + self.utils.TEXT_COLOR + "BUST")
+            self.match.print_hands(self.menu.username, hide_dealer_card=False)
+            print("\n" + self.theme.text_color + "BUST")
 
             return self.lose()
 
-        print("\n" + self.utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
+        print("\n" + self.theme.text_color + "[H]: HIT [S]: STAND")
         return False
 
     def stand(self) -> bool:
@@ -115,30 +117,30 @@ class BlackjackGameManager:
             bool: Wether or not the game ended.
         """
 
-        player_points: int = self.pnts.calculate_points(self.match.player_hand)
-        dealer_points: int = self.pnts.calculate_points(self.match.dealer_hand)
+        player_points: int = self.points.calculate_points(self.match.player_hand)
+        dealer_points: int = self.points.calculate_points(self.match.dealer_hand)
 
-        self.match.print_hands(self.mnu.username, hide_dealer_card=False)
+        self.match.print_hands(self.menu.username, hide_dealer_card=False)
 
         if dealer_points > 21:
-            print("\n" + self.utils.TEXT_COLOR + "DEALER BUST")
+            print("\n" + self.theme.text_color + "DEALER BUST")
 
             return self.win()
 
         if player_points > dealer_points:
-            print("\n" + self.utils.TEXT_COLOR + "YOU HAVE MORE POINTS")
+            print("\n" + self.theme.text_color + "YOU HAVE MORE POINTS")
 
             return self.win()
 
         if player_points < dealer_points:
-            print("\n" + self.utils.TEXT_COLOR + "YOU HAVE LESS POINTS")
+            print("\n" + self.theme.text_color + "YOU HAVE LESS POINTS")
 
             return self.lose()
 
         if player_points == dealer_points:
-            print("\n" + self.utils.TEXT_COLOR + "ITS A TIE" + "\n")
+            print("\n" + self.theme.text_color + "ITS A TIE" + "\n")
 
-            self.match_history.add_game_played(self.mnu.username)
+            self.match_history.add_game_played(self.menu.username)
 
             return True
 
@@ -147,7 +149,7 @@ class BlackjackGameManager:
     def hit_or_stand(self) -> None:
         """Handles game logic for hit or stand."""
 
-        print("\n" + self.utils.TEXT_COLOR + "[H]: HIT [S]: STAND")
+        print("\n" + self.theme.text_color + "[H]: HIT [S]: STAND")
 
         while True:
             event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
@@ -164,10 +166,10 @@ class BlackjackGameManager:
     def exit_game(self) -> None:
         """Exits the program."""
 
-        self.snd.stop_in_game()
+        self.sound.stop_in_game()
         self.utils.clear_term()
-        self.snd.play_close_game()
-        print(Utils.TEXT_COLOR + "GOODBYE" + Fore.WHITE)
+        self.sound.play_close_game()
+        print(self.theme.text_color + "GOODBYE" + Fore.WHITE)
         time.sleep(1)
         self.utils.clear_term()
         self.utils.toggle_cursor()
@@ -176,14 +178,14 @@ class BlackjackGameManager:
     def game_over_prompt(self) -> None:
         """Prompts the user asking if they want to play again or close the program."""
 
-        print(self.utils.TEXT_COLOR + "[ENTER]: PLAY AGAIN [ESC]: QUIT")
+        print(self.theme.text_color + "[ENTER]: PLAY AGAIN [ESC]: QUIT")
 
         while True:
             event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
 
             if event.event_type == "down":
                 if event.name == "enter":
-                    self.snd.play_pluck()
+                    self.sound.play_pluck()
                     break
 
                 if event.name == "esc":
@@ -192,8 +194,8 @@ class BlackjackGameManager:
     def run(self) -> None:
         """Main loop."""
 
-        self.mnu.title_screen()
-        self.mnu.prompt_for_username()
+        self.menu.title_screen()
+        self.menu.prompt_for_username()
         self.start_match()
 
         while self.play_again:
@@ -201,8 +203,8 @@ class BlackjackGameManager:
             deck: list[Card] = deck_object.create_deck()
             self.match = Match(deck)
 
-            self.bet: int = self.mnu.prompt_for_bet()
+            self.bet: int = self.menu.prompt_for_bet()
             self.deal_initial_hands()
             self.hit_or_stand()
-            self.match_history.update_winrate(self.mnu.username)
+            self.match_history.update_winrate(self.menu.username)
             self.game_over_prompt()
