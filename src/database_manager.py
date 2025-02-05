@@ -41,6 +41,25 @@ class Database:
 
         return user_database
 
+    def read_one(self, username: str) -> dict[str, str | int | float]:
+        """
+        Get a single user from the database.
+
+        Args:
+            username (str): Username string.
+
+        Returns:
+            dict[str, str | int | float]: The user database entry.
+        """
+
+        users: list[dict[str, str | int | float]] = self.read()
+
+        for user in users:
+            if user.get("username", "username") == username:
+                return user
+
+        return {}
+
     def create(self, content: dict[str, str | int | float]) -> None:
         """
         Write dict content to users file.
