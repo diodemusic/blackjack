@@ -196,6 +196,7 @@ class BlackjackGameManager:
 
         self.menu.title_screen()
         self.menu.prompt_for_username()
+        self.menu.prompt_for_new_theme()
         self.start_match()
 
         while self.play_again:

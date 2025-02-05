@@ -42,12 +42,14 @@ class MainMenu:
         while True:
             event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
 
-            if event.event_type == "down":
-                if event.name == "enter":
-                    self.sound.play_pluck()
-                    return
-
+            if event.event_type != "down":
                 continue
+
+            if event.name == "enter":
+                self.sound.play_pluck()
+                return
+
+            continue
 
     def prompt_for_username(self) -> None:
         """Clear the terminal and ask the user for a username."""
@@ -67,7 +69,36 @@ class MainMenu:
         self.sound.stop_menu()
         self.utils.toggle_cursor()
 
-        self.theme.set_theme(self.username, self.theme.theme_1)
+        self.theme.get_theme(self.username)
+
+    def prompt_for_new_theme(self) -> None:
+        """Prompt the user to set a new theme."""
+
+        self.utils.clear_term()
+
+        for i in range(1, 10):
+            print(
+                self.theme.text_color
+                + f"{i}. THEME {i}.".center(self.utils.TEXT_PADDING)
+            )
+
+        while True:
+            event: keyboard.KeyboardEvent = keyboard.read_event(suppress=True)
+
+            if event.event_type != "down":
+                continue
+
+            if event.name == "1":
+                self.sound.play_pluck()
+                self.theme.set_theme(self.username, self.theme.theme_1)
+                return
+
+            if event.name == "2":
+                self.sound.play_pluck()
+                self.theme.set_theme(self.username, self.theme.theme_2)
+                return
+
+            continue
 
     def bet_error(self, message: str) -> None:
         """

@@ -37,3 +37,18 @@ class Theme:
         self.text_color = theme.get("text_color", Fore.WHITE)
         self.card_color = theme.get("card_color", Fore.WHITE)
         self.background_color = theme.get("background_color", Fore.BLACK)
+
+    def get_theme(self, username: str) -> None:
+        """
+        Set the theme from whatever is stored in the databse.
+        This method does not return the current theme.
+
+        Args:
+            username (str): Username string.
+        """
+
+        user: dict[str, str | int | float] = self.database.read_one(username)
+
+        self.text_color = str(user.get("text_color", Fore.WHITE))
+        self.card_color = str(user.get("card_color", Fore.WHITE))
+        self.background_color = str(user.get("background_color", Fore.BLACK))

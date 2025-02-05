@@ -31,12 +31,13 @@
 ## In Progress
 
 - [ ] Create a private utility program for creating my own new themes
-- [ ] Add a theme switcher
-- [ ] Store themes on a per user basis
 - [ ] Encrypt chip amount
 
 ## Done
 
+- [x] Store themes on a per user basis
+- [x] Add a theme switcher
+- [x] Get theme from username
 - [x] Impliment theme logic
 - [x] Show dealers hand on player bust
 - [x] Implement a method to display your current chips
